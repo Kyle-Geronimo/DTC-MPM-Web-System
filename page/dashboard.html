@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Monitoring & Project Management System</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="monitoring.html">Monitoring</a></li>
+                <li><a href="tasks.html">Tasks</a></li>
+                <li><a href="team.html">Team</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><a href="settings.html">Settings</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="user-profile">
+                        <img src="assets/user-avatar.png" alt="User" class="avatar">
+                        <span>Admin User</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Statistics -->
+            <section class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-icon">📁</div>
+                    <div class="stat-info">
+                        <h3>Active Projects</h3>
+                        <p class="stat-value">12</p>
+                        <p class="stat-change">+2 this week</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3>Completed Tasks</h3>
+                        <p class="stat-value">48</p>
+                        <p class="stat-change">+5 today</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <h3>Team Members</h3>
+                        <p class="stat-value">25</p>
+                        <p class="stat-change">5 online</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-info">
+                        <h3>Open Issues</h3>
+                        <p class="stat-value">8</p>
+                        <p class="stat-change">3 critical</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Charts -->
+            <section class="dashboard-section">
+                <div class="chart-container">
+                    <h2>Project Progress</h2>
+                    <div class="progress-bars">
+                        <div class="progress-item">
+                            <label>Website Redesign</label>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                            <span>75%</span>
+                        </div>
+                        <div class="progress-item">
+                            <label>Mobile App Development</label>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%"></div>
+                            </div>
+                            <span>60%</span>
+                        </div>
+                        <div class="progress-item">
+                            <label>API Integration</label>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 90%"></div>
+                            </div>
+                            <span>90%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activities">
+                    <h2>Recent Activities</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-time">10:30 AM</span>
+                            <span class="activity-text">John completed task "Update Database Schema"</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">09:15 AM</span>
+                            <span class="activity-text">Sarah created new project "Mobile App v2"</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">08:45 AM</span>
+                            <span class="activity-text">System deployed new version to production</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">Yesterday</span>
+                            <span class="activity-text">Team meeting completed for Q1 Planning</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="actions-section">
+                <h2>Quick Actions</h2>
+                <div class="action-buttons">
+                    <button class="action-btn">+ New Project</button>
+                    <button class="action-btn">+ Assign Task</button>
+                    <button class="action-btn">📅 Schedule Meeting</button>
+                    <button class="action-btn">👥 Add Team Member</button>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
