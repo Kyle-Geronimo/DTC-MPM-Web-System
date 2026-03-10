@@ -1,4 +1,4 @@
-# 📊 Project Management & Monitoring Dashboard System
+# 📊 Digital Transformation Center - Monitoring and Project Management System
 
 A comprehensive web-based dashboard for managing projects, monitoring system performance, and coordinating team activities.
 
@@ -368,3 +368,4 @@ This project is proprietary and confidential.
 ---
 **Created**: March 2026
 **Version**: 1.0
+
