@@ -1,0 +1,88 @@
+<?php
+/**
+ * Update Project API
+ * Accepts POST data to update a project by id or name
+ */
+
+session_start();
+require_once('config.php');
+require_once('db_connect.php');
+header('Content-Type: application/json');
+
+$response = ['success' => false];
+
+try {
+    if (empty($_POST['id']) && empty($_POST['name'])) {
+        throw new Exception('Missing project identifier');
+    }
+
+    // Collect fields
+    $id = isset($_POST['id']) ? $_POST['id'] : null;
+    $name = isset($_POST['name']) ? $_POST['name'] : null;
+    $description = isset($_POST['description']) ? $_POST['description'] : null;
+    $start_date = isset($_POST['start_date']) && $_POST['start_date'] !== '' ? strtotime($_POST['start_date']) : null;
+    $end_date = isset($_POST['end_date']) && $_POST['end_date'] !== '' ? strtotime($_POST['end_date']) : null;
+    $status = isset($_POST['status']) ? $_POST['status'] : null;
+    $progress = isset($_POST['progress']) ? intval($_POST['progress']) : null;
+    $budget = isset($_POST['budget']) && $_POST['budget'] !== '' ? $_POST['budget'] : null;
+    $spent = isset($_POST['spent']) && $_POST['spent'] !== '' ? $_POST['spent'] : null;
+
+    // Build dynamic update
+    $fields = [];
+    $params = [];
+    $types = '';
+
+    if ($name !== null) { $fields[] = 'name = ?'; $params[] = $name; $types .= 's'; }
+    if ($description !== null) { $fields[] = 'description = ?'; $params[] = $description; $types .= 's'; }
+    if ($start_date !== null) { $fields[] = 'start_date = ?'; $params[] = $start_date; $types .= 'i'; }
+    if ($end_date !== null) { $fields[] = 'end_date = ?'; $params[] = $end_date; $types .= 'i'; }
+    if ($status !== null) { $fields[] = 'status = ?'; $params[] = $status; $types .= 's'; }
+    if ($progress !== null) { $fields[] = 'progress = ?'; $params[] = $progress; $types .= 'i'; }
+    if ($budget !== null) { $fields[] = 'budget = ?'; $params[] = $budget; $types .= 'd'; }
+    if ($spent !== null) { $fields[] = 'spent = ?'; $params[] = $spent; $types .= 'd'; }
+
+    if (empty($fields)) {
+        throw new Exception('No fields to update');
+    }
+
+    $sql = 'UPDATE projects SET ' . implode(', ', $fields) . ' WHERE ';
+    if ($id) {
+        $sql .= 'id = ? LIMIT 1';
+        $params[] = $id; $types .= 's';
+    } else {
+        $sql .= 'name = ? LIMIT 1';
+        $params[] = $name; $types .= 's';
+    }
+
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) throw new Exception($conn->error);
+
+    // bind params dynamically
+    $bind_names[] = $types;
+    for ($i=0; $i<count($params); $i++) {
+        $bind_name = 'bind' . $i;
+        $$bind_name = $params[$i];
+        $bind_names[] = &$$bind_name;
+    }
+    call_user_func_array([$stmt, 'bind_param'], $bind_names);
+
+    $ok = $stmt->execute();
+    if (!$ok) throw new Exception($stmt->error ?: 'Failed to update');
+
+    if ($stmt->affected_rows === 0) {
+        // No rows changed, but may still be success
+    }
+
+    $response['success'] = true;
+    $response['message'] = 'Project updated';
+
+    $stmt->close();
+} catch (Exception $e) {
+    $response['success'] = false;
+    $response['message'] = $e->getMessage();
+}
+
+echo json_encode($response);
+$conn->close();
+
+?>
