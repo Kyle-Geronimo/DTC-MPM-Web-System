@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Monitoring & Project Management System</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="http://localhost/ProjectDashboard/page/dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/projects.html">Projects</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/monitoring.html">Monitoring</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/tasks.html">Tasks</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/team.html">Team</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/reports.html">Reports</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/admin.html">Admin</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/settings.html">Settings</a></li>
+                <li><a href="http://localhost/ProjectDashboard/settings/logout.php" style="color: #ff6b6b;">Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div class="user-profile">
+                        <div class="avatar" id="userAvatar">A</div>
+                        <span id="userName">Admin User</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Statistics -->
+            <section class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-icon">📁</div>
+                    <div class="stat-info">
+                        <h3>Active Projects</h3>
+                        <p class="stat-value" id="activeProjectsCount">...</p>
+                        <p class="stat-change" id="projectsThisWeek">Loading...</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3>Completed Tasks</h3>
+                        <p class="stat-value" id="completedTasksCount">...</p>
+                        <p class="stat-change" id="tasksToday">Loading...</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <h3>Team Members</h3>
+                        <p class="stat-value" id="teamMembersCount">...</p>
+                        <p class="stat-change" id="usersOnline">Loading...</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-info">
+                        <h3>Open Issues</h3>
+                        <p class="stat-value" id="openIssuesCount">...</p>
+                        <p class="stat-change" id="criticalIssues">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Charts -->
+            <section class="dashboard-section">
+                <div class="chart-container">
+                    <h2>Project Progress</h2>
+                    <div class="progress-bars" id="projectProgressBars">
+                        <!-- Will be populated dynamically from database -->
+                        <div class="progress-item">
+                            <label>Loading projects...</label>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span>0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activities">
+                    <h2>Recent Activities</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-time">10:30 AM</span>
+                            <span class="activity-text">John completed task "Update Database Schema"</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">09:15 AM</span>
+                            <span class="activity-text">Sarah created new project "Mobile App v2"</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">08:45 AM</span>
+                            <span class="activity-text">System deployed new version to production</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">Yesterday</span>
+                            <span class="activity-text">Team meeting completed for Q1 Planning</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="actions-section">
+                <h2>Quick Actions</h2>
+                <div class="action-buttons">
+                    <button class="action-btn" id="newProjectBtn">+ New Project</button>
+                    <button class="action-btn" id="assignTaskBtn">+ Assign Task</button>
+                    <button class="action-btn" id="scheduleMeetingBtn">📅 Schedule Meeting</button>
+                    <button class="action-btn" id="addTeamBtn">+ Add Team</button>
+                    <button class="action-btn" id="openAddMemberBtn">+ Add Member</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- New Project Modal -->
+    <div id="newProjectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📁 Create New Project</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="newProjectForm">
+                <div class="form-group">
+                    <label for="projectName">Project Name *</label>
+                    <input type="text" id="projectName" name="name" required placeholder="Enter project name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectDescription">Description</label>
+                    <textarea id="projectDescription" name="description" rows="3" placeholder="Brief description of the project"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectStartDate">Start Date *</label>
+                        <input type="date" id="projectStartDate" name="start_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectEndDate">End Date *</label>
+                        <input type="date" id="projectEndDate" name="end_date" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectStatus">Status</label>
+                        <select id="projectStatus" name="status">
+                            <option value="active">Active</option>
+                            <option value="on-hold">On Hold</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectProgress">Initial Progress (%)</label>
+                        <input type="number" id="projectProgress" name="progress" min="0" max="100" value="0" placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn-primary" id="submitProjectBtn">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assign Task Modal -->
+    <div id="assignTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✅ Assign New Task</h2>
+                <span class="close-task">&times;</span>
+            </div>
+            <form id="assignTaskForm">
+                <div class="form-group">
+                    <label for="taskTitle">Task Title *</label>
+                    <input type="text" id="taskTitle" name="title" required placeholder="Enter task title">
+                </div>
+                
+                <div class="form-group">
+                    <label for="taskDescription">Description</label>
+                    <textarea id="taskDescription" name="description" rows="3" placeholder="Task description"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskPriority">Priority *</label>
+                        <select id="taskPriority" name="priority" required>
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskStatus">Status</label>
+                        <select id="taskStatus" name="status">
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskDueDate">Due Date *</label>
+                        <input type="date" id="taskDueDate" name="due_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskEstimatedHours">Estimated Hours</label>
+                        <input type="number" id="taskEstimatedHours" name="estimated_hours" min="0" step="0.5" placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary cancel-task">Cancel</button>
+                    <button type="submit" class="btn-primary" id="submitTaskBtn">Assign Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Schedule Meeting Modal -->
+    <div id="scheduleMeetingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📅 Schedule Meeting</h2>
+                <span class="close-meeting">&times;</span>
+            </div>
+            <form id="scheduleMeetingForm">
+                <div class="form-group">
+                    <label for="meetingTitle">Meeting Title *</label>
+                    <input type="text" id="meetingTitle" name="title" required placeholder="Enter meeting title">
+                </div>
+                
+                <div class="form-group">
+                    <label for="meetingDescription">Agenda</label>
+                    <textarea id="meetingDescription" name="description" rows="3" placeholder="Meeting agenda and notes"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="meetingDate">Date *</label>
+                        <input type="date" id="meetingDate" name="meeting_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="meetingTime">Time *</label>
+                        <input type="time" id="meetingTime" name="meeting_time" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="meetingDuration">Duration (hours)</label>
+                        <input type="number" id="meetingDuration" name="duration" min="0.5" step="0.5" value="1" placeholder="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="meetingPriority">Priority</label>
+                        <select id="meetingPriority" name="priority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary cancel-meeting">Cancel</button>
+                    <button type="submit" class="btn-primary" id="submitMeetingBtn">Schedule Meeting</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Team Modal -->
+    <div id="addTeamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👥 Add Team</h2>
+                <span class="close-member">&times;</span>
+            </div>
+            <form id="addTeamForm">
+                <div class="form-group">
+                    <label for="teamName">Team Name *</label>
+                    <input type="text" id="teamName" name="name" required placeholder="Enter team name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="teamDescription">Description</label>
+                    <textarea id="teamDescription" name="description" rows="3" placeholder="Team description and responsibilities"></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary cancel-member">Cancel</button>
+                    <button type="submit" class="btn-primary" id="submitTeamBtn">Add Team</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Member Modal (for dashboard quick add) -->
+    <div id="addMemberModalDashboard" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👥 Add Team Member</h2>
+                <span class="close-add-member">&times;</span>
+            </div>
+            <form id="addMemberFormDashboard">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstNameDash">First Name</label>
+                        <input type="text" id="firstNameDash" name="firstname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastNameDash">Last Name</label>
+                        <input type="text" id="lastNameDash" name="lastname" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="emailDash">Email</label>
+                    <input type="email" id="emailDash" name="email" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="memberRoleDash">Role</label>
+                        <input type="text" id="memberRoleDash" name="role" placeholder="Developer, QA, Manager">
+                    </div>
+                    <div class="form-group">
+                        <label for="memberTeamDash">Team</label>
+                        <select id="memberTeamDash" name="team_id">
+                            <option value="">Unassigned</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelAddMemberDash">Cancel</button>
+                    <button type="submit" class="btn-primary" id="submitAddMemberDash">Add Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/dashboard.js"></script>
+    <script>
+    fetch('../settings/get_user.php').then(r=>r.json()).then(d=>{
+        if(d&&d.full_name){const n=d.full_name;const a=document.getElementById('userAvatar');const s=document.getElementById('userName');if(a)a.textContent=n.charAt(0).toUpperCase();if(s)s.textContent=n;}
+    }).catch(()=>{});
+    </script>
+</body>
+</html>

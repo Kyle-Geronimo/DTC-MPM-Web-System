@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Project Management System</title>
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="http://localhost/ProjectDashboard/page/dashboard.html">Dashboard</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/projects.html">Projects</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/monitoring.html">Monitoring</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/tasks.html">Tasks</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/team.html">Team</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/reports.html">Reports</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/admin.html" class="active">Admin</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/settings.html">Settings</a></li>
+                <li><a href="http://localhost/ProjectDashboard/settings/logout.php" style="color: #ff6b6b;">Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Admin Panel</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <input type="text" id="headerSearch" placeholder="Search...">
+                    </div>
+                    <div class="user-profile">
+                        <div class="avatar" id="userAvatar">A</div>
+                        <span id="userName">Admin User</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Admin Section Tabs -->
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-section="overview">📈 Overview</button>
+                    <button class="tab-btn" data-section="users">👥 Users</button>
+                    <button class="tab-btn" data-section="projects">📁 Projects</button>
+                    <button class="tab-btn" data-section="activity">📋 Activity</button>
+                    <button class="tab-btn" data-section="password-resets">🔐 Password Resets</button>
+                    <button class="tab-btn" data-section="settings">⚙️ Settings</button>
+                    <button class="tab-btn" data-section="database">🗄️ Database</button>
+                </div>
+            </div>
+
+            <!-- Content Sections Wrapper -->
+            <div class="admin-content">
+            <!-- Content Sections Wrapper -->
+            <div class="admin-content">
+            <!-- Overview Section -->
+            <section id="overview" class="content-section active">                
+                <!-- Stats Cards -->
+                <div class="stats-section">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h3>Total Users</h3>
+                            <p class="stat-value" id="totalUsers">-</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📁</div>
+                        <div class="stat-info">
+                            <h3>Active Projects</h3>
+                            <p class="stat-value" id="totalProjects">-</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✓</div>
+                        <div class="stat-info">
+                            <h3>Total Tasks</h3>
+                            <p class="stat-value" id="totalTasks">-</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-info">
+                            <h3>Active Today</h3>
+                            <p class="stat-value" id="activeUsers">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="dashboard-section">
+                    <h2>Recent System Activity</h2>
+                    <div id="recentActivity" class="activity-list">
+                        <p class="loading">Loading activity...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Management Section -->
+            <section id="users" class="content-section">
+                <div class="section-header">
+                    <h1>User Management</h1>
+                    <button class="btn-primary" onclick="refreshUsers()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="userSearch" placeholder="Search users by name or email...">
+                        <select id="roleFilter">
+                            <option value="">All Roles</option>
+                            <option value="admin">Admin</option>
+                            <option value="manager">Manager</option>
+                            <option value="developer">Developer</option>
+                            <option value="user">User</option>
+                        </select>
+                        <select id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="loading">Loading users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projects" class="content-section">
+                <div class="section-header">
+                    <h1>Project Management</h1>
+                    <button class="btn-primary" onclick="refreshProjects()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table id="projectsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Project Name</th>
+                                    <th>Status</th>
+                                    <th>Progress</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Created By</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="loading">Loading projects...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Activity Logs Section -->
+            <section id="activity" class="content-section">
+                <div class="section-header">
+                    <h1>Activity Logs</h1>
+                    <button class="btn-primary" onclick="refreshLogs()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="activitySearch" placeholder="Search activity...">
+                        <select id="actionFilter">
+                            <option value="">All Actions</option>
+                            <option value="login">Login</option>
+                            <option value="logout">Logout</option>
+                            <option value="register">Register</option>
+                            <option value="password_reset">Password Reset</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="activityTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Entity Type</th>
+                                    <th>Description</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" class="loading">Loading activity logs...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Password Reset Requests Section -->
+            <section id="password-resets" class="content-section">
+                <div class="section-header">
+                    <h1>Password Reset Requests</h1>
+                    <button class="btn-primary" onclick="refreshPasswordResets()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="resetSearch" placeholder="Search by email...">
+                        <select id="resetStatusFilter">
+                            <option value="">All Requests</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="resetRequestsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Email</th>
+                                    <th>User Name</th>
+                                    <th>Token</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Expires</th>
+                                    <th>Used At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="9" class="loading">Loading password reset requests...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Settings Section -->
+            <section id="settings" class="content-section">
+                <h1>System Settings</h1>
+                
+                <div class="settings-grid">
+                    <div class="card">
+                        <h3>🔐 Security Settings</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="twoFactorAuth">
+                                Enable Two-Factor Authentication
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="forcePasswordReset" checked>
+                                Force Password Reset (90 days)
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>Password Minimum Length:</label>
+                            <input type="number" value="8" min="6" max="20">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>📧 Email Settings</h3>
+                        <div class="setting-item">
+                            <label>SMTP Host:</label>
+                            <input type="text" value="smtp.mailtrap.io" readonly>
+                        </div>
+                        <div class="setting-item">
+                            <label>SMTP Port:</label>
+                            <input type="number" value="2525" readonly>
+                        </div>
+                        <div class="setting-item">
+                            <label>From Email:</label>
+                            <input type="email" value="noreply@projectdashboard.local" readonly>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>🎨 Appearance</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="darkMode">
+                                Enable Dark Mode
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>Theme Color:</label>
+                            <input type="color" value="#2563eb">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>⚙️ System</h3>
+                        <div class="setting-item">
+                            <label>Session Timeout (minutes):</label>
+                            <input type="number" value="30" min="5" max="120">
+                        </div>
+                        <div class="setting-item">
+                            <label>Items Per Page:</label>
+                            <input type="number" value="20" min="10" max="100">
+                        </div>
+                        <button class="btn-primary">Save Settings</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Database Section -->
+            <section id="database" class="content-section">
+                <h1>Database Management</h1>
+                
+                <div class="card">
+                    <h3>📊 Database Statistics</h3>
+                    <div class="db-stats">
+                        <div class="db-stat-item">
+                            <strong>Database Name:</strong>
+                            <span>project_management_db</span>
+                        </div>
+                        <div class="db-stat-item">
+                            <strong>Total Tables:</strong>
+                            <span id="totalTables">-</span>
+                        </div>
+                        <div class="db-stat-item">
+                            <strong>Total Records:</strong>
+                            <span id="totalRecords">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🗄️ Database Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn-success" onclick="alert('Backup feature - coming soon!')">
+                            💾 Backup Database
+                        </button>
+                        <button class="btn-warning" onclick="if(confirm('Clean old logs?')) alert('Cleanup feature - coming soon!')">
+                            🧹 Clean Old Logs
+                        </button>
+                        <button class="btn-danger" onclick="if(confirm('Are you sure? This will optimize all tables.')) alert('Optimize feature - coming soon!')">
+                            ⚡ Optimize Tables
+                        </button>
+                    </div>
+                </div>
+            </section>
+            </div>
+            <!-- End admin-content -->
+        </main>
+    </div>
+
+    <script src="../js/admin.js"></script>
+    <script>
+    fetch('../settings/get_user.php').then(r=>r.json()).then(d=>{
+        if(d&&d.full_name){const n=d.full_name;const a=document.getElementById('userAvatar');const s=document.getElementById('userName');if(a)a.textContent=n.charAt(0).toUpperCase();if(s)s.textContent=n;}
+    }).catch(()=>{});
+    </script>
+</body>
+</html>
