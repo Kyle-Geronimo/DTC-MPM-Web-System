@@ -1,0 +1,527 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Project Management System</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        #toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:10px}
+        .toast{padding:12px 20px;border-radius:8px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.15);display:flex;align-items:center;gap:10px;min-width:280px;max-width:420px;animation:slideIn .3s ease;cursor:pointer;transition:opacity .3s}
+        .toast.removing{animation:slideOut .3s ease forwards}
+        .toast-success{background:#10b981}.toast-error{background:#ef4444}.toast-warning{background:#f59e0b}.toast-info{background:#3b82f6}
+        @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+        @keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}
+        .notification-bell{position:relative;cursor:pointer;font-size:20px;margin-right:15px}
+        .notification-badge{position:absolute;top:-6px;right:-8px;background:#ef4444;color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;display:none}
+        .notification-panel{position:absolute;top:40px;right:0;width:340px;max-height:400px;background:#fff;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.15);z-index:9999;display:none;overflow:hidden}
+        .notification-panel.show{display:block}
+        .notification-panel-header{padding:12px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;font-weight:600}
+        .notification-panel-header a{font-size:12px;color:#3b82f6;text-decoration:none}
+        .notification-list{max-height:340px;overflow-y:auto}
+        .notification-item{padding:12px 16px;border-bottom:1px solid #f3f4f6;cursor:pointer;transition:background .2s}
+        .notification-item:hover{background:#f9fafb}
+        .notification-item.unread{background:#eff6ff;border-left:3px solid #3b82f6}
+        .notification-item .notif-msg{font-size:13px;color:#374151}
+        .notification-item .notif-time{font-size:11px;color:#9ca3af;margin-top:4px}
+        .notification-empty{padding:30px;text-align:center;color:#9ca3af;font-size:14px}
+        /* ===== User Dropdown ===== */
+        #userMenuWrapper{position:relative;display:inline-block}
+        .user-menu-btn{display:inline-flex;align-items:center;gap:8px;background:#f0f4ff;border:1.5px solid #c7d2fe;border-radius:8px;padding:7px 13px 7px 9px;cursor:pointer;font-size:14px;font-weight:500;color:#374151}
+        .user-menu-btn:hover{background:#e0e7ff;border-color:#818cf8}
+        .user-menu-btn .caret{font-size:10px;color:#6366f1}
+        .user-dropdown{display:none;position:absolute;right:0;top:calc(100% + 6px);min-width:190px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.15);z-index:99999;overflow:hidden}
+        .user-dropdown.open{display:block}
+        .user-dropdown-info{padding:12px 16px 10px;border-bottom:1px solid #f3f4f6}
+        .user-dropdown-info b{display:block;font-size:14px;color:#111827}
+        .user-dropdown-info small{font-size:12px;color:#9ca3af}
+        .dropdown-link{display:flex;align-items:center;gap:10px;padding:11px 16px;color:#374151;text-decoration:none;font-size:14px;transition:background .15s}
+        .dropdown-link:hover{background:#f3f4f6}
+        .dropdown-link.logout-link{color:#ef4444;border-top:1px solid #f3f4f6}
+        .dropdown-link.logout-link:hover{background:#fff5f5}
+        /* ===== Loading Spinner Overlay ===== */
+        #loadingOverlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.75);z-index:99999;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+        #loadingOverlay.active{display:flex}
+        .spinner{width:48px;height:48px;border:4px solid #e5e7eb;border-top:4px solid #2563eb;border-radius:50%;animation:spin .7s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .spinner-text{font-size:14px;color:#6b7280;font-weight:500}
+    </style>
+</head>
+<body>
+    <!-- Loading Spinner Overlay -->
+    <div id="loadingOverlay"><div class="spinner"></div><div class="spinner-text">Loading...</div></div>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="http://localhost/ProjectDashboard/page/dashboard.html">Dashboard</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/projects.html">Projects</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/monitoring.html">Monitoring</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/tasks.html">Tasks</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/team.php">Team</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/reports.html">Reports</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/admin.html" class="active">Admin</a></li>
+                <!-- Settings and Logout moved to user dropdown -->
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Admin Panel</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell" id="notificationBell">
+                        🔔
+                        <span class="notification-badge" id="notifBadge">0</span>
+                        <div class="notification-panel" id="notifPanel">
+                            <div class="notification-panel-header">
+                                <span>Notifications</span>
+                                <a href="#" id="markAllRead">Mark all read</a>
+                            </div>
+                            <div class="notification-list" id="notifList">
+                                <div class="notification-empty">No notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="headerSearch" placeholder="Search...">
+                    </div>
+                    <div id="userMenuWrapper">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <div class="avatar" id="userAvatar">A</div>
+                            <span id="userName">Admin User</span>
+                            <span class="caret">&#9660;</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-dropdown-info">
+                                <b id="dropUserName">Admin User</b>
+                                <small>Administrator</small>
+                            </div>
+                            <a href="/ProjectDashboard/page/settings.html" class="dropdown-link">&#9881;&#65039; Settings</a>
+                            <a href="/ProjectDashboard/settings/logout.php" class="dropdown-link logout-link">&#128682; Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Admin Section Tabs -->
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-section="overview">📈 Overview</button>
+                    <button class="tab-btn" data-section="users">👥 Users</button>
+                    <button class="tab-btn" data-section="archive">🗃️ Archive</button>
+                    <button class="tab-btn" data-section="projects">📁 Projects</button>
+                    <button class="tab-btn" data-section="activity">📋 Activity</button>
+                    <button class="tab-btn" data-section="password-resets">🔐 Password Resets</button>
+                    <button class="tab-btn" data-section="settings">⚙️ Settings</button>
+                    <button class="tab-btn" data-section="database">🗄️ Database</button>
+                </div>
+            </div>
+
+            <!-- Content Sections Wrapper -->
+            <div class="admin-content">
+            <!-- Overview Section -->
+            <section id="overview" class="content-section active">                
+                <!-- Stats Cards -->
+                <div class="stats-section">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h3>Total Users</h3>
+                            <p class="stat-value" id="totalUsers">-</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📁</div>
+                        <div class="stat-info">
+                            <h3>Active Projects</h3>
+                            <p class="stat-value" id="totalProjects">-</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✓</div>
+                        <div class="stat-info">
+                            <h3>Total Tasks</h3>
+                            <p class="stat-value" id="totalTasks">-</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-info">
+                            <h3>Active Today</h3>
+                            <p class="stat-value" id="activeUsers">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="dashboard-section">
+                    <h2>Recent System Activity</h2>
+                    <div id="recentActivity" class="activity-list">
+                        <p class="loading">Loading activity...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Management Section -->
+            <section id="users" class="content-section">
+                <div class="section-header">
+                    <h1>User Management</h1>
+                    <button class="btn-primary" onclick="refreshUsers()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="userSearch" placeholder="Search users by name or email...">
+                        <select id="roleFilter">
+                            <option value="">All Roles</option>
+                            <option value="admin">Admin</option>
+                            <option value="manager">Manager</option>
+                            <option value="developer">Developer</option>
+                            <option value="user">User</option>
+                        </select>
+                        <select id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="loading">Loading users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Archive Section -->
+            <section id="archive" class="content-section">
+                <div class="section-header">
+                    <h1>Archived Accounts</h1>
+                    <button class="btn-primary" onclick="refreshArchive()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="archiveSearch" placeholder="Search archived accounts by name or email...">
+                    </div>
+
+                    <div class="table-container">
+                        <table id="archiveTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="loading">Loading archived accounts...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projects" class="content-section">
+                <div class="section-header">
+                    <h1>Project Management</h1>
+                    <button class="btn-primary" onclick="refreshProjects()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table id="projectsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Project Name</th>
+                                    <th>Status</th>
+                                    <th>Progress</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Created By</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="loading">Loading projects...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Activity Logs Section -->
+            <section id="activity" class="content-section">
+                <div class="section-header">
+                    <h1>Activity Logs</h1>
+                    <button class="btn-primary" onclick="refreshLogs()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="activitySearch" placeholder="Search activity...">
+                        <select id="actionFilter">
+                            <option value="">All Actions</option>
+                            <option value="login">Login</option>
+                            <option value="logout">Logout</option>
+                            <option value="register">Register</option>
+                            <option value="password_reset">Password Reset</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="activityTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Entity Type</th>
+                                    <th>Description</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" class="loading">Loading activity logs...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Password Reset Requests Section -->
+            <section id="password-resets" class="content-section">
+                <div class="section-header">
+                    <h1>Password Reset Requests</h1>
+                    <button class="btn-primary" onclick="refreshPasswordResets()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="resetSearch" placeholder="Search by email...">
+                        <select id="resetStatusFilter">
+                            <option value="">All Requests</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="resetRequestsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Email</th>
+                                    <th>User Name</th>
+                                    <th>Token</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Expires</th>
+                                    <th>Used At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="9" class="loading">Loading password reset requests...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Settings Section -->
+            <section id="settings" class="content-section">
+                <h1>System Settings</h1>
+                
+                <div class="settings-grid">
+                    <div class="card">
+                        <h3>🔐 Security Settings</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="twoFactorAuth">
+                                Enable Two-Factor Authentication
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="forcePasswordReset" checked>
+                                Force Password Reset (90 days)
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>Password Minimum Length:</label>
+                            <input type="number" value="8" min="6" max="20">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>📧 Email Settings</h3>
+                        <div class="setting-item">
+                            <label>SMTP Host:</label>
+                            <input type="text" value="smtp.mailtrap.io" readonly>
+                        </div>
+                        <div class="setting-item">
+                            <label>SMTP Port:</label>
+                            <input type="number" value="2525" readonly>
+                        </div>
+                        <div class="setting-item">
+                            <label>From Email:</label>
+                            <input type="email" value="noreply@projectdashboard.local" readonly>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>🎨 Appearance</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="darkMode">
+                                Enable Dark Mode
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>Theme Color:</label>
+                            <input type="color" value="#2563eb">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>⚙️ System</h3>
+                        <div class="setting-item">
+                            <label>Session Timeout (minutes):</label>
+                            <input type="number" value="30" min="5" max="120">
+                        </div>
+                        <div class="setting-item">
+                            <label>Items Per Page:</label>
+                            <input type="number" value="20" min="10" max="100">
+                        </div>
+                        <button class="btn-primary">Save Settings</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Database Section -->
+            <section id="database" class="content-section">
+                <h1>Database Management</h1>
+                
+                <div class="card">
+                    <h3>📊 Database Statistics</h3>
+                    <div class="db-stats">
+                        <div class="db-stat-item">
+                            <strong>Database Name:</strong>
+                            <span>project_management_db</span>
+                        </div>
+                        <div class="db-stat-item">
+                            <strong>Total Tables:</strong>
+                            <span id="totalTables">-</span>
+                        </div>
+                        <div class="db-stat-item">
+                            <strong>Total Records:</strong>
+                            <span id="totalRecords">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🗄️ Database Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn-success" onclick="alert('Backup feature - coming soon!')">
+                            💾 Backup Database
+                        </button>
+                        <button class="btn-warning" onclick="if(confirm('Clean old logs?')) alert('Cleanup feature - coming soon!')">
+                            🧹 Clean Old Logs
+                        </button>
+                        <button class="btn-danger" onclick="if(confirm('Are you sure? This will optimize all tables.')) alert('Optimize feature - coming soon!')">
+                            ⚡ Optimize Tables
+                        </button>
+                    </div>
+                </div>
+            </section>
+            </div>
+            <!-- End admin-content -->
+        </main>
+    </div>
+
+    <script src="../js/app_core.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+    // Check user role from DB — only admin can view this page
+    fetch('../settings/get_user.php').then(r=>r.json()).then(d=>{
+        if(!d || d.role !== 'admin'){
+            // Not an admin — redirect to dashboard
+            window.location.href = 'dashboard.html';
+            return;
+        }
+        if(d.full_name){
+            const n=d.full_name;
+            const a=document.getElementById('userAvatar');
+            const s=document.getElementById('userName');
+            const dd=document.getElementById('dropUserName');
+            if(a) a.textContent=n.charAt(0).toUpperCase();
+            if(s) s.textContent=n;
+            if(dd) dd.textContent=n;
+        }
+    }).catch(()=>{ window.location.href = 'dashboard.html'; });
+    </script>
+    <script>
+    (function(){
+        var btn=document.getElementById('userMenuBtn');
+        var menu=document.getElementById('userDropdown');
+        if(!btn||!menu)return;
+        btn.addEventListener('click',function(e){e.stopPropagation();menu.classList.toggle('open');});
+        document.addEventListener('click',function(e){if(!menu.contains(e.target)&&!btn.contains(e.target)){menu.classList.remove('open');}});
+        document.addEventListener('keydown',function(e){if(e.key==='Escape')menu.classList.remove('open');});
+    })();
+    </script>
+</body>
+</html>
