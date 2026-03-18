@@ -1,0 +1,376 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring - Monitoring & Project Management System</title>
+    <link rel="stylesheet" href="../css/monitoring.css">
+    <link rel="stylesheet" href="../css/common.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="http://localhost/ProjectDashboard/page/front_panel.html">Front Panel</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/projects.html">Projects</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/monitoring.html" class="active">Monitoring</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/tasks.html">Tasks</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/team.html">Team</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/reports.html">Reports</a></li>
+                <li id="adminNavLink" style="display:none"><a href="http://localhost/ProjectDashboard/page/admin.html">Admin</a></li>
+                <!-- Settings and Logout moved to user dropdown -->
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>System Monitoring</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell" id="notificationBell">
+                        🔔
+                        <span class="notification-badge" id="notifBadge">0</span>
+                        <div class="notification-panel" id="notifPanel">
+                            <div class="notification-panel-header">
+                                <span>Notifications</span>
+                                <a href="#" id="markAllRead">Mark all read</a>
+                            </div>
+                            <div class="notification-list" id="notifList">
+                                <div class="notification-empty">No notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="userMenuWrapper">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <div class="avatar" id="userAvatar">A</div>
+                            <span id="userName">Admin User</span>
+                            <span class="caret">&#9660;</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-dropdown-info">
+                                <b id="dropUserName">Admin User</b>
+                                <small>Administrator</small>
+                            </div>
+                            <a href="/ProjectDashboard/page/settings.html" class="dropdown-link">&#9881;&#65039; Settings</a>
+                            <a href="/ProjectDashboard/settings/logout.php" class="dropdown-link logout-link">&#128682; Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="action-bar">
+                <button class="btn-refresh">🔄 Refresh</button>
+            </div>
+
+            <!-- Health Status Overview -->
+            <section class="health-overview">
+                <h2>System Health Status</h2>
+                <div class="health-grid">
+                    <div class="health-card healthy">
+                        <div class="health-icon">✓</div>
+                        <h3>Server Status</h3>
+                        <p class="health-status">Online</p>
+                        <small>Last checked: 2 mins ago</small>
+                    </div>
+                    <div class="health-card healthy">
+                        <div class="health-icon">✓</div>
+                        <h3>Database</h3>
+                        <p class="health-status">Connected</p>
+                        <small>Response time: 12ms</small>
+                    </div>
+                    <div class="health-card warning">
+                        <div class="health-icon">⚠️</div>
+                        <h3>Memory Usage</h3>
+                        <p class="health-status">75%</p>
+                        <small>Warning threshold reached</small>
+                    </div>
+                    <div class="health-card healthy">
+                        <div class="health-icon">✓</div>
+                        <h3>API Endpoints</h3>
+                        <p class="health-status">All Active</p>
+                        <small>25/25 endpoints responding</small>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Metrics -->
+            <section class="metrics-section">
+                <div class="metric-card">
+                    <h3>CPU Usage</h3>
+                    <div class="metric-display">
+                        <div class="circular-progress" style="--progress: 65">
+                            <span>65%</span>
+                        </div>
+                    </div>
+                    <div class="metric-details">
+                        <p>Usage: 65% of 8 cores</p>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="width: 65%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <h3>RAM Usage</h3>
+                    <div class="metric-display">
+                        <div class="circular-progress warning" style="--progress: 75">
+                            <span>75%</span>
+                        </div>
+                    </div>
+                    <div class="metric-details">
+                        <p>Usage: 30 GB of 40 GB</p>
+                        <div class="metric-bar">
+                            <div class="metric-fill warning" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <h3>Disk Space</h3>
+                    <div class="metric-display">
+                        <div class="circular-progress" style="--progress: 45">
+                            <span>45%</span>
+                        </div>
+                    </div>
+                    <div class="metric-details">
+                        <p>Usage: 450 GB of 1000 GB</p>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="width: 45%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <h3>Network I/O</h3>
+                    <div class="metric-display">
+                        <div class="circular-progress" style="--progress: 35">
+                            <span>35%</span>
+                        </div>
+                    </div>
+                    <div class="metric-details">
+                        <p>Bandwidth: 350 Mbps of 1000 Mbps</p>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="width: 35%"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Monitoring -->
+            <section class="performance-section">
+                <div class="performance-card">
+                    <h2>Response Times (Last 24 Hours)</h2>
+                    <div class="response-chart">
+                        <div class="chart-bar" style="height: 45%"></div>
+                        <div class="chart-bar" style="height: 60%"></div>
+                        <div class="chart-bar" style="height: 38%"></div>
+                        <div class="chart-bar" style="height: 52%"></div>
+                        <div class="chart-bar" style="height: 70%"></div>
+                        <div class="chart-bar" style="height: 55%"></div>
+                        <div class="chart-bar" style="height: 65%"></div>
+                        <div class="chart-bar" style="height: 48%"></div>
+                    </div>
+                    <div class="chart-legend">
+                        <span>12 AM</span>
+                        <span>6 AM</span>
+                        <span>12 PM</span>
+                        <span>6 PM</span>
+                        <span>12 AM</span>
+                    </div>
+                </div>
+
+                <div class="performance-card">
+                    <h2>Error Rates</h2>
+                    <div class="error-table">
+                        <div class="error-row">
+                            <span class="error-endpoint">/api/projects</span>
+                            <span class="error-count">2 errors</span>
+                        </div>
+                        <div class="error-row">
+                            <span class="error-endpoint">/api/tasks</span>
+                            <span class="error-count">0 errors</span>
+                        </div>
+                        <div class="error-row">
+                            <span class="error-endpoint">/api/users</span>
+                            <span class="error-count">1 error</span>
+                        </div>
+                        <div class="error-row">
+                            <span class="error-endpoint">/api/reports</span>
+                            <span class="error-count">0 errors</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Active Alerts -->
+            <section class="alerts-section">
+                <h2>Active Alerts</h2>
+                <div class="alerts-list">
+                    <div class="alert-item warning">
+                        <span class="alert-icon">⚠️</span>
+                        <div class="alert-content">
+                            <h4>High Memory Usage</h4>
+                            <p>Memory usage is at 75%. Consider optimizing or scaling up.</p>
+                            <small>Triggered: 15 mins ago</small>
+                        </div>
+                    </div>
+                    <div class="alert-item info">
+                        <span class="alert-icon">ℹ️</span>
+                        <div class="alert-content">
+                            <h4>Backup Completed</h4>
+                            <p>Database backup completed successfully.</p>
+                            <small>Completed: 1 hour ago</small>
+                        </div>
+                    </div>
+                    <div class="alert-item success">
+                        <span class="alert-icon">✓</span>
+                        <div class="alert-content">
+                            <h4>System Update Installed</h4>
+                            <p>Security patches have been successfully applied.</p>
+                            <small>Installed: 3 hours ago</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script>
+        // Monitoring page: simulate fetching new metrics and update the DOM
+        (function(){
+            const refreshBtn = document.querySelector('.btn-refresh');
+
+            function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+            function updateHealth(){
+                const cards = document.querySelectorAll('.health-grid .health-card');
+                if(!cards.length) return;
+
+                // Server status (index 0)
+                const serverStatus = cards[0].querySelector('.health-status');
+                const serverSmall = cards[0].querySelector('small');
+                const serverOnline = Math.random() > 0.05; // 95% online
+                serverStatus.textContent = serverOnline ? 'Online' : 'Offline';
+                serverSmall.textContent = 'Last checked: ' + randInt(1,5) + ' mins ago';
+
+                // Database (index 1)
+                const dbStatus = cards[1].querySelector('.health-status');
+                const dbSmall = cards[1].querySelector('small');
+                const dbConnected = Math.random() > 0.03;
+                dbStatus.textContent = dbConnected ? 'Connected' : 'Disconnected';
+                dbSmall.textContent = 'Response time: ' + randInt(5,120) + 'ms';
+
+                // Memory (index 2)
+                const memStatus = cards[2].querySelector('.health-status');
+                const memSmall = cards[2].querySelector('small');
+                const memPct = randInt(30,92);
+                memStatus.textContent = memPct + '%';
+                memSmall.textContent = memPct>80 ? 'Warning threshold reached' : 'Normal';
+
+                // API endpoints (index 3)
+                const apiStatus = cards[3].querySelector('.health-status');
+                const apiSmall = cards[3].querySelector('small');
+                const total = 25;
+                const up = Math.max(0, total - randInt(0,3));
+                apiStatus.textContent = up===total ? 'All Active' : up + '/' + total + ' active';
+                apiSmall.textContent = up + '/' + total + ' endpoints responding';
+            }
+
+            function updateMetrics(){
+                const metricCards = document.querySelectorAll('.metrics-section .metric-card');
+                metricCards.forEach((card, i) => {
+                    const pct = randInt(20,90);
+                    const circ = card.querySelector('.circular-progress');
+                    if(circ) {
+                        circ.style.setProperty('--progress', pct);
+                        const span = circ.querySelector('span');
+                        if(span) span.textContent = pct + '%';
+                    }
+                    const fill = card.querySelector('.metric-fill');
+                    if(fill) fill.style.width = pct + '%';
+                    const p = card.querySelector('.metric-details p');
+                    if(p){
+                        // update textual content depending on index
+                        if(i===0) p.textContent = 'Usage: ' + pct + '% of 8 cores';
+                        if(i===1) p.textContent = 'Usage: ' + Math.round(pct/100*40) + ' GB of 40 GB';
+                        if(i===2) p.textContent = 'Usage: ' + Math.round(pct/100*1000) + ' GB of 1000 GB';
+                        if(i===3) p.textContent = 'Bandwidth: ' + Math.round(pct/100*1000) + ' Mbps of 1000 Mbps';
+                    }
+                });
+            }
+
+            function updatePerformance(){
+                const bars = document.querySelectorAll('.response-chart .chart-bar');
+                bars.forEach(bar => {
+                    const h = randInt(30,85);
+                    bar.style.height = h + '%';
+                });
+                const errors = document.querySelectorAll('.error-row .error-count');
+                errors.forEach(err => {
+                    const n = randInt(0,5);
+                    err.textContent = n + (n===1 ? ' error' : ' errors');
+                });
+            }
+
+            function updateAlerts(){
+                const smalls = document.querySelectorAll('.alerts-list small');
+                smalls.forEach(s => {
+                    s.textContent = (randInt(1,59)) + ' mins ago';
+                });
+            }
+
+            async function doRefresh(){
+                refreshBtn.disabled = true;
+                const original = refreshBtn.textContent;
+                refreshBtn.textContent = 'Refreshing...';
+
+                // simulate network delay
+                await new Promise(r => setTimeout(r, 700 + randInt(0,800)));
+
+                updateHealth();
+                updateMetrics();
+                updatePerformance();
+                updateAlerts();
+
+                refreshBtn.textContent = original;
+                refreshBtn.disabled = false;
+            }
+
+            // wire up
+            if(refreshBtn){
+                refreshBtn.addEventListener('click', doRefresh);
+            }
+
+            // initial randomize on load
+            document.addEventListener('DOMContentLoaded', () => {
+                updateHealth();
+                updateMetrics();
+                updatePerformance();
+                updateAlerts();
+            });
+        })();
+    </script>
+    <script src="../js/app_core.js"></script>
+    <script>
+    fetch('../settings/get_user.php').then(r=>r.json()).then(d=>{
+        if(d&&d.full_name){const n=d.full_name;const a=document.getElementById('userAvatar');const s=document.getElementById('userName');const dd=document.getElementById('dropUserName');if(a)a.textContent=n.charAt(0).toUpperCase();if(s)s.textContent=n;if(dd)dd.textContent=n;}
+    }).catch(()=>{});
+    </script>
+    <script>
+    (function(){
+        var btn=document.getElementById('userMenuBtn');
+        var menu=document.getElementById('userDropdown');
+        if(!btn||!menu)return;
+        btn.addEventListener('click',function(e){e.stopPropagation();menu.classList.toggle('open');});
+        document.addEventListener('click',function(e){if(!menu.contains(e.target)&&!btn.contains(e.target)){menu.classList.remove('open');}});
+        document.addEventListener('keydown',function(e){if(e.key==='Escape')menu.classList.remove('open');});
+    })();
+    </script>
+</body>
+</html>
