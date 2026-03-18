@@ -1,0 +1,296 @@
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    ADMIN PANEL DATABASE STRUCTURE                           │
+│                    Project Management System                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+TABLE OVERVIEW (11 Tables)
+═══════════════════════════════════════════════════════════════════════════════
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 1. USERS                                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Core user accounts and authentication                                      │
+│ Used in: Overview Tab, Users Tab                                          │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT                                                    │
+│     username        VARCHAR(50)    UNIQUE                                  │
+│     email           VARCHAR(100)   UNIQUE                                  │
+│     password        VARCHAR(255)   [SHA256 Hash]                          │
+│     full_name       VARCHAR(100)                                           │
+│     phone           VARCHAR(20)                                            │
+│     department      VARCHAR(50)                                            │
+│     role            VARCHAR(50)    DEFAULT 'user'                         │
+│     status          VARCHAR(20)    DEFAULT 'active'                       │
+│     avatar_url      VARCHAR(255)                                           │
+│     created_at      TIMESTAMP                                              │
+│     updated_at      TIMESTAMP                                              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 2. PROJECTS                                                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Project information and tracking                                           │
+│ Used in: Overview Tab, Projects Tab                                       │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT                                                    │
+│     name            VARCHAR(100)                                           │
+│     description     TEXT                                                   │
+│     status          VARCHAR(50)    DEFAULT 'active'                       │
+│     start_date      DATE                                                   │
+│     end_date        DATE                                                   │
+│     progress        INT            DEFAULT 0 (0-100)                      │
+│ FK  team_id         INT            → teams(id)                            │
+│ FK  created_by      INT            → users(id)                            │
+│     created_at      TIMESTAMP                                              │
+│     updated_at      TIMESTAMP                                              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 3. TASKS                                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Task assignments and status tracking                                       │
+│ Used in: Overview Tab (task count)                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT                                                    │
+│     title           VARCHAR(150)                                           │
+│     description     TEXT                                                   │
+│ FK  project_id      INT            → projects(id)                         │
+│ FK  assigned_to     INT            → users(id)                            │
+│     priority        VARCHAR(20)    DEFAULT 'medium'                       │
+│     status          VARCHAR(50)    DEFAULT 'todo'                         │
+│     due_date        DATE                                                   │
+│     created_at      TIMESTAMP                                              │
+│     updated_at      TIMESTAMP                                              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 4. TEAMS                                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Team/department organization                                               │
+│ Used in: Projects Tab                                                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT                                                    │
+│     name            VARCHAR(100)                                           │
+│     description     TEXT                                                   │
+│     created_at      TIMESTAMP                                              │
+│     updated_at      TIMESTAMP                                              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 5. TEAM_MEMBERS                                                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Many-to-many relationship: users ↔ teams                                  │
+│ Used in: Team management in Projects Tab                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT                                                    │
+│ FK  team_id         INT            → teams(id)                            │
+│ FK  user_id         INT            → users(id)                            │
+│     role            VARCHAR(50)                                            │
+│     joined_at       TIMESTAMP                                              │
+│ UK  (team_id, user_id)                                                    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 6. ACTIVITY_LOG                                                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│ System-wide activity audit trail                                          │
+│ Used in: Activity Tab, Overview Tab (Recent Activity)                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT                                                    │
+│ FK  user_id         INT            → users(id) [NULL for system]         │
+│     action          VARCHAR(100)   [login, logout, create, etc.]         │
+│     entity_type     VARCHAR(50)    [user, project, task, etc.]           │
+│     entity_id       INT                                                    │
+│     description     TEXT                                                   │
+│     ip_address      VARCHAR(45)                                            │
+│     user_agent      TEXT                                                   │
+│     created_at      TIMESTAMP                                              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 7. PASSWORD_RESET_TOKENS                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Password reset requests requiring admin approval                          │
+│ Used in: Password Resets Tab                                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id                  INT                                                │
+│     email               VARCHAR(100)                                       │
+│     token               VARCHAR(255)   [Unique reset token]              │
+│     new_password_hash   VARCHAR(255)   [SHA256 Hash]                     │
+│     approval_status     ENUM           [pending/approved/rejected]       │
+│ FK  admin_id            INT            → users(id)                        │
+│     expires_at          DATETIME       [1 hour from creation]            │
+│     created_at          TIMESTAMP                                          │
+│     used                TINYINT(1)     [0=unused, 1=used]                │
+│     used_at             DATETIME                                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 8. SYSTEM_MONITORING                                                       │
+├────────────────────────────────────────────────────────────────────────────┤
+│ System performance metrics and thresholds                                  │
+│ Used in: Overview Tab (optional monitoring)                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id                  INT                                                │
+│     metric_name         VARCHAR(100)   [CPU Usage, RAM, Disk, etc.]      │
+│     metric_value        DECIMAL(10,2)                                      │
+│     unit                VARCHAR(20)    [percent, MB, ms]                 │
+│     threshold_warning   DECIMAL(10,2)                                      │
+│     threshold_critical  DECIMAL(10,2)                                      │
+│     status              VARCHAR(20)    [normal, warning, critical]       │
+│     recorded_at         TIMESTAMP                                          │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 9. ALERTS                                                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│ System alerts and notifications                                            │
+│ Used in: Overview Tab (alerts section)                                    │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT                                                    │
+│     alert_type      VARCHAR(50)    [system, security, task, etc.]        │
+│     subject         VARCHAR(200)                                           │
+│     message         TEXT                                                   │
+│     severity        VARCHAR(20)    [info, warning, critical]             │
+│     status          VARCHAR(20)    DEFAULT 'active'                       │
+│     created_at      TIMESTAMP                                              │
+│     resolved_at     TIMESTAMP                                              │
+│ FK  resolved_by     INT            → users(id)                            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 10. REPORTS                                                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Generated report storage                                                   │
+│ Used in: Reports section (if implemented)                                 │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT                                                    │
+│     title           VARCHAR(150)                                           │
+│     report_type     VARCHAR(50)                                            │
+│     content         LONGTEXT       [JSON or HTML]                         │
+│ FK  created_by      INT            → users(id)                            │
+│     created_at      TIMESTAMP                                              │
+│     updated_at      TIMESTAMP                                              │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 11. SETTINGS                                                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│ User and system settings configuration                                     │
+│ Used in: Settings Tab                                                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT                                                    │
+│ FK  user_id         INT            → users(id) [NULL=global]             │
+│     setting_key     VARCHAR(100)                                           │
+│     setting_value   TEXT                                                   │
+│     created_at      TIMESTAMP                                              │
+│     updated_at      TIMESTAMP                                              │
+│ UK  (user_id, setting_key)                                                │
+└────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+RELATIONSHIP DIAGRAM
+═══════════════════════════════════════════════════════════════════════════════
+
+                              ┌──────────────┐
+                              │    USERS     │
+                              │  (Core Auth) │
+                              └───────┬──────┘
+                                      │
+                    ┌─────────────────┼─────────────────┐
+                    │                 │                 │
+                    ▼                 ▼                 ▼
+           ┌────────────────┐ ┌──────────────┐ ┌──────────────┐
+           │   PROJECTS     │ │ ACTIVITY_LOG │ │ TEAM_MEMBERS │
+           │  (created_by)  │ │   (user_id)  │ │   (user_id)  │
+           └────────┬───────┘ └──────────────┘ └──────┬───────┘
+                    │                                  │
+                    ▼                                  ▼
+           ┌────────────────┐                 ┌──────────────┐
+           │     TASKS      │                 │    TEAMS     │
+           │  (project_id)  │                 │              │
+           │  (assigned_to) │                 └──────────────┘
+           └────────────────┘
+
+     ┌──────────────────────┐
+     │PASSWORD_RESET_TOKENS │ ──────────┐
+     │     (admin_id)       │           │ (approved by)
+     └──────────────────────┘           │
+                                        ▼
+                                  ┌──────────┐
+                                  │  USERS   │
+                                  └──────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+ADMIN PANEL TAB MAPPING
+═══════════════════════════════════════════════════════════════════════════════
+
+📈 OVERVIEW TAB
+  ├─ users              → Total Users count
+  ├─ projects           → Active Projects count
+  ├─ tasks              → Total Tasks count
+  ├─ activity_log       → Active Today count
+  └─ activity_log       → Recent System Activity list
+
+👥 USERS TAB
+  └─ users              → User listing, search, CRUD operations
+
+📁 PROJECTS TAB
+  ├─ projects           → Project listing, statistics
+  ├─ users              → Created by information
+  └─ teams              → Team assignments
+
+📋 ACTIVITY TAB
+  ├─ activity_log       → All activity entries
+  └─ users              → User names for activities
+
+🔐 PASSWORD RESETS TAB
+  ├─ password_reset_tokens  → All reset requests
+  ├─ users                  → User info, password updates
+  └─ activity_log           → Log approve/reject actions
+
+⚙️ SETTINGS TAB
+  └─ settings               → System and user settings
+
+🗄️ DATABASE TAB
+  └─ information_schema.TABLES  → Table statistics
+
+═══════════════════════════════════════════════════════════════════════════════
+KEY STATISTICS QUERIES
+═══════════════════════════════════════════════════════════════════════════════
+
+Total Users:
+  SELECT COUNT(*) FROM users
+
+Active Projects:
+  SELECT COUNT(*) FROM projects WHERE status = 'active'
+
+Total Tasks:
+  SELECT COUNT(*) FROM tasks
+
+Active Users Today:
+  SELECT COUNT(DISTINCT user_id) FROM activity_log 
+  WHERE DATE(created_at) = CURDATE()
+
+Pending Password Resets:
+  SELECT COUNT(*) FROM password_reset_tokens 
+  WHERE approval_status = 'pending' AND expires_at > NOW()
+
+═══════════════════════════════════════════════════════════════════════════════
+FILE LOCATIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+Database Schema SQL:
+  └─ settings/ADMIN_DATABASE_STRUCTURE.sql
+
+Database Documentation:
+  └─ ADMIN_DATABASE_REFERENCE.md
+
+Admin Panel Files:
+  ├─ page/admin.html              (Frontend interface)
+  ├─ css/admin.css                (Styling)
+  ├─ js/admin.js                  (JavaScript logic)
+  └─ settings/admin_api.php       (Backend API)
+
+═══════════════════════════════════════════════════════════════════════════════
