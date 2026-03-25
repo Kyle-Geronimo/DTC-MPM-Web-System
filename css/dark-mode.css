@@ -1,0 +1,58 @@
+/* Site-wide dark-mode overrides applied when <body class="dark"> is present */
+:root {
+    --dm-primary: #60a5fa;
+    --dm-secondary: #1e3a8a;
+    --dm-card: #0b1220;
+    --dm-bg: #071026;
+    --dm-border: #15202b;
+    --dm-text: #e6eef8;
+    --dm-subtext: #9fb3c9;
+}
+
+body.dark {
+    background-color: var(--dm-bg) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark .header,
+body.dark .card,
+body.dark .stat-card,
+body.dark .dashboard-section,
+body.dark .table-container,
+body.dark .modal-content {
+    background: var(--dm-card) !important;
+    color: var(--dm-text) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6) !important;
+}
+
+body.dark .sidebar {
+    background: linear-gradient(135deg, var(--dm-primary) 0%, var(--dm-secondary) 100%) !important;
+}
+
+body.dark table th,
+body.dark table td {
+    color: var(--dm-text) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark .search-box input,
+body.dark .search-bar input,
+body.dark .search-bar select,
+body.dark .setting-item input[type="text"],
+body.dark .setting-item input[type="number"],
+body.dark .setting-item input[type="email"],
+body.dark input,
+body.dark textarea,
+body.dark select {
+    background: rgba(255,255,255,0.03) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark .avatar { background: #2b6cb0 !important; }
+
+body.dark .status-badge.active { background: #083b2e !important; color: #8ef3be !important; }
+body.dark .status-badge.inactive { background: #3b1212 !important; color: #ffb4b4 !important; }
+
+/* Modal overlay */
+body.dark .modal { background: rgba(2,6,23,0.7) !important; }
