@@ -1,0 +1,564 @@
+/* Site-wide dark-mode overrides applied when <body class="dark"> is present */
+:root {
+    --dm-primary: #ef4444;
+    --dm-secondary: #7f1d1d;
+    --dm-card: #0b1220;
+    --dm-bg: #071026;
+    --dm-border: #15202b;
+    --dm-text: #e6eef8;
+    --dm-subtext: #9fb3c9;
+}
+
+body.dark {
+    background-color: var(--dm-bg) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark .header,
+body.dark .card,
+body.dark .stat-card,
+body.dark .dashboard-section,
+body.dark .table-container,
+body.dark .modal-content {
+    background: var(--dm-card) !important;
+    color: var(--dm-text) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6) !important;
+}
+
+/* Make settings and other white panels dark in dark mode */
+body.dark .settings-container,
+body.dark .settings-sidebar,
+body.dark .settings-menu,
+body.dark .settings-panel,
+body.dark .settings-section,
+body.dark .settings-menu a,
+body.dark .main-content,
+body.dark .container,
+body.dark .projects-grid,
+body.dark .project-card,
+body.dark .settings-panel .card {
+    background: var(--dm-card) !important;
+    color: var(--dm-text) !important;
+    border-color: var(--dm-border) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6) !important;
+}
+
+body.dark .settings-menu a {
+    background: transparent !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark .sidebar {
+    background: linear-gradient(135deg, var(--dm-primary) 0%, var(--dm-secondary) 100%) !important;
+}
+
+body.dark table th,
+body.dark table td {
+    color: var(--dm-text) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark .search-box input,
+body.dark .search-bar input,
+body.dark .search-bar select,
+body.dark .setting-item input[type="text"],
+body.dark .setting-item input[type="number"],
+body.dark .setting-item input[type="email"],
+body.dark input,
+body.dark textarea,
+body.dark select {
+    background: rgba(255,255,255,0.03) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark .avatar { background: var(--dm-primary) !important; }
+
+body.dark .status-badge.active { background: #083b2e !important; color: #8ef3be !important; }
+body.dark .status-badge.inactive { background: #3b1212 !important; color: #ffb4b4 !important; }
+
+/* Modal overlay */
+body.dark .modal { background: rgba(2,6,23,0.7) !important; }
+
+/* Broad overrides for remaining white containers */
+body.dark .card,
+body.dark .panel,
+body.dark .box,
+body.dark .widget,
+body.dark .panel-content,
+body.dark .panel-body,
+body.dark .projects-grid,
+body.dark .project-card,
+body.dark .stat-card,
+body.dark .activity-list .activity-item,
+body.dark .integration-item,
+body.dark .table-container,
+body.dark table,
+body.dark table th,
+body.dark table td,
+body.dark .progress-bar,
+body.dark .progress-fill,
+/* Monitoring page cards */
+body.dark .health-card,
+body.dark .metric-card,
+body.dark .performance-card,
+body.dark .alert-item,
+body.dark .error-row,
+/* Team page cards */
+body.dark .stat-box,
+body.dark .teams,
+/* Tasks / Reports cards */
+body.dark .task-card,
+body.dark .report-card,
+body.dark .member-card,
+body.dark .activity-card,
+/* Front panel containers */
+body.dark .chart-container,
+body.dark .recent-activities,
+body.dark .settings-panel,
+body.dark .settings-menu,
+body.dark .settings-section,
+body.dark .settings-sidebar,
+body.dark .settings-container {
+    background: var(--dm-card) !important;
+    color: var(--dm-text) !important;
+    border-color: var(--dm-border) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6) !important;
+}
+
+/* Ensure table rows and cells don't stay white */
+body.dark table, body.dark table th, body.dark table td { background: transparent !important; }
+body.dark table tbody tr:hover, body.dark-mode table tbody tr:hover { background: rgba(255,255,255,0.06) !important; }
+body.dark table tbody tr:nth-child(even), body.dark-mode table tbody tr:nth-child(even) { background: rgba(255,255,255,0.02) !important; }
+
+/* Make progress fills visible on dark backgrounds */
+body.dark .progress-bar { background: rgba(255,255,255,0.04) !important; }
+body.dark .progress-fill { background: var(--dm-primary) !important; }
+
+
+/* Ensure all panel content and child elements show light text on dark backgrounds */
+body.dark .settings-panel,
+body.dark .settings-panel *,
+body.dark .settings-menu,
+body.dark .settings-menu *,
+body.dark .settings-sidebar,
+body.dark .settings-section,
+body.dark .option-group,
+body.dark .integration-item,
+body.dark .integration-item *,
+body.dark .integration-list,
+body.dark .theme-options,
+body.dark .theme-btn,
+body.dark .theme-btn.active,
+body.dark .btn-save,
+body.dark .btn-secondary,
+body.dark .btn-connect,
+body.dark .form-group,
+body.dark .form-group label,
+body.dark .form-group input,
+body.dark .form-group textarea,
+body.dark .form-select,
+body.dark .option-desc,
+body.dark .option-title {
+    color: var(--dm-text) !important;
+}
+
+/* Force dark backgrounds for boxes and inputs */
+body.dark .settings-panel,
+body.dark .settings-menu,
+body.dark .settings-sidebar,
+body.dark .settings-section,
+body.dark .option-group,
+body.dark .integration-item,
+body.dark .integration-list,
+body.dark .theme-options,
+body.dark .form-group input,
+body.dark .form-group textarea,
+body.dark .form-select {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+}
+
+/* Buttons should remain prominent but have readable text */
+body.dark .btn-save { background: var(--dm-primary) !important; color: #fff !important; border-color: var(--dm-primary) !important; }
+body.dark .btn-secondary { background: rgba(255,255,255,0.03) !important; color: var(--dm-text) !important; border-color: var(--dm-border) !important; }
+body.dark .btn-connect { background: var(--dm-primary) !important; color: #fff !important; }
+
+/* Links and small text */
+body.dark a, body.dark a:visited { color: #9fd1ff !important; }
+
+/* ============================================================
+   COMPREHENSIVE DARK-MODE TEXT READABILITY
+   Ensures ALL text is white/light when dark theme is active.
+   Also targets body.dark-mode for admin.js toggle compatibility.
+   ============================================================ */
+
+/* Universal catch-all: force light text on dark backgrounds */
+body.dark,
+body.dark-mode {
+    color: var(--dm-text) !important;
+}
+
+/* ---------- Page headings & labels (on dark bg) ---------- */
+body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark h5, body.dark h6,
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4, body.dark-mode h5, body.dark-mode h6 {
+    color: var(--dm-text) !important;
+}
+
+/* Generic text elements on dark backgrounds */
+body.dark p, body.dark span, body.dark label, body.dark li, body.dark td, body.dark th, body.dark small, body.dark b, body.dark strong, body.dark em,
+body.dark-mode p, body.dark-mode span, body.dark-mode label, body.dark-mode li, body.dark-mode td, body.dark-mode th, body.dark-mode small, body.dark-mode b, body.dark-mode strong, body.dark-mode em {
+    color: var(--dm-text) !important;
+}
+
+/* ---------- Header & user profile ---------- */
+body.dark .header-left h1,
+body.dark .section-header h1,
+body.dark .user-profile span,
+body.dark .user-dropdown-info b,
+body.dark .user-dropdown-info small,
+body.dark .dropdown-link,
+body.dark-mode .header-left h1,
+body.dark-mode .section-header h1,
+body.dark-mode .user-profile span,
+body.dark-mode .user-dropdown-info b,
+body.dark-mode .user-dropdown-info small,
+body.dark-mode .dropdown-link {
+    color: var(--dm-text) !important;
+}
+
+/* ---------- Project cards ---------- */
+body.dark .project-header h3,
+body.dark .project-desc,
+body.dark .team-badge,
+body.dark .date,
+body.dark .progress-text,
+body.dark-mode .project-header h3,
+body.dark-mode .project-desc,
+body.dark-mode .team-badge,
+body.dark-mode .date,
+body.dark-mode .progress-text {
+    color: var(--dm-text) !important;
+}
+
+/* ---------- Tables ---------- */
+body.dark table th,
+body.dark table td,
+body.dark-mode table th,
+body.dark-mode table td {
+    color: var(--dm-text) !important;
+}
+
+/* ---------- Tabs ---------- */
+body.dark .tab-btn,
+body.dark-mode .tab-btn {
+    color: var(--dm-subtext) !important;
+}
+
+body.dark .tab-btn:hover,
+body.dark .tab-btn.active,
+body.dark-mode .tab-btn:hover,
+body.dark-mode .tab-btn.active {
+    color: #fff !important;
+}
+
+/* ---------- Forms / modals ---------- */
+body.dark .form-group label,
+body.dark .modal-content,
+body.dark .modal-content *,
+body.dark-mode .form-group label,
+body.dark-mode .modal-content,
+body.dark-mode .modal-content * {
+    color: var(--dm-text) !important;
+}
+
+body.dark .modal-header,
+body.dark .modal-header *,
+body.dark-mode .modal-header,
+body.dark-mode .modal-header * {
+    color: #fff !important;
+}
+
+/* ---------- Dashboard & front-panel widgets ---------- */
+body.dark .stat-info h3,
+body.dark .stat-value,
+body.dark .activity-text,
+body.dark .activity-time,
+body.dark .activity-content p,
+body.dark .progress-item label,
+body.dark .loading,
+body.dark .loading-message,
+body.dark-mode .stat-info h3,
+body.dark-mode .stat-value,
+body.dark-mode .activity-text,
+body.dark-mode .activity-time,
+body.dark-mode .activity-content p,
+body.dark-mode .progress-item label,
+body.dark-mode .loading,
+body.dark-mode .loading-message {
+    color: var(--dm-text) !important;
+}
+
+/* Tasks, Team, Reports text uses light color from generic rules above */
+
+/* ---------- Chat ---------- */
+body.dark .chat-group-name,
+body.dark .chat-message-text,
+body.dark-mode .chat-group-name,
+body.dark-mode .chat-message-text {
+    color: var(--dm-text) !important;
+}
+
+/* ---------- Settings ---------- */
+body.dark .settings-link,
+body.dark .settings-section h2,
+body.dark .option-desc,
+body.dark-mode .settings-link,
+body.dark-mode .settings-section h2,
+body.dark-mode .option-desc {
+    color: var(--dm-text) !important;
+}
+
+/* ---------- Notification dropdown ---------- */
+body.dark .notification-item .notif-msg,
+body.dark-mode .notification-item .notif-msg {
+    color: var(--dm-text) !important;
+}
+
+/* ---------- Auth pages (login, register, forgot password) ---------- */
+body.dark .login-header h1, body.dark .register-header h1, body.dark .forgot-header h1,
+body.dark .login-header p, body.dark .register-header p, body.dark .forgot-header p,
+body.dark .login-footer, body.dark .register-footer, body.dark .forgot-footer, body.dark .forgot-footer p,
+body.dark .info-text,
+body.dark-mode .login-header h1, body.dark-mode .register-header h1, body.dark-mode .forgot-header h1,
+body.dark-mode .login-header p, body.dark-mode .register-header p, body.dark-mode .forgot-header p,
+body.dark-mode .login-footer, body.dark-mode .register-footer, body.dark-mode .forgot-footer, body.dark-mode .forgot-footer p,
+body.dark-mode .info-text {
+    color: var(--dm-text) !important;
+}
+
+/* ---------- Inputs & placeholders ---------- */
+body.dark input, body.dark textarea, body.dark select,
+body.dark-mode input, body.dark-mode textarea, body.dark-mode select {
+    color: var(--dm-text) !important;
+    background: rgba(255,255,255,0.03) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark input::placeholder, body.dark textarea::placeholder,
+body.dark-mode input::placeholder, body.dark-mode textarea::placeholder {
+    color: var(--dm-subtext) !important;
+}
+
+/* ---------- Buttons (icon buttons on cards) ---------- */
+body.dark .btn-icon,
+body.dark-mode .btn-icon {
+    background: rgba(255,255,255,0.06) !important;
+    color: var(--dm-text) !important;
+}
+
+body.dark .btn-icon:hover,
+body.dark-mode .btn-icon:hover {
+    background: var(--dm-primary) !important;
+    color: #fff !important;
+}
+
+/* ---------- body.dark-mode background parity ---------- */
+body.dark-mode {
+    background-color: var(--dm-bg) !important;
+}
+
+body.dark-mode .header,
+body.dark-mode .card,
+body.dark-mode .stat-card,
+body.dark-mode .dashboard-section,
+body.dark-mode .table-container,
+body.dark-mode .modal-content,
+body.dark-mode .main-content,
+body.dark-mode .container,
+body.dark-mode .projects-grid,
+body.dark-mode .project-card,
+body.dark-mode .settings-container,
+body.dark-mode .settings-sidebar,
+body.dark-mode .settings-menu,
+body.dark-mode .settings-panel,
+body.dark-mode .settings-section,
+/* Additional containers for full dark-mode parity */
+body.dark-mode .health-card,
+body.dark-mode .metric-card,
+body.dark-mode .performance-card,
+body.dark-mode .alert-item,
+body.dark-mode .error-row,
+body.dark-mode .stat-box,
+body.dark-mode .teams,
+body.dark-mode .task-card,
+body.dark-mode .report-card,
+body.dark-mode .member-card,
+body.dark-mode .activity-card,
+body.dark-mode .chart-container,
+body.dark-mode .recent-activities {
+    background: var(--dm-card) !important;
+    color: var(--dm-text) !important;
+    border-color: var(--dm-border) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6) !important;
+}
+
+body.dark-mode .sidebar {
+    background: linear-gradient(135deg, var(--dm-primary) 0%, var(--dm-secondary) 100%) !important;
+}
+
+body.dark-mode a, body.dark-mode a:visited { color: #9fd1ff !important; }
+
+/* Sidebar nav links should stay white in both modes */
+body.dark .sidebar a, body.dark .sidebar a:visited,
+body.dark-mode .sidebar a, body.dark-mode .sidebar a:visited {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+body.dark .sidebar a:hover, body.dark .sidebar a.active,
+body.dark-mode .sidebar a:hover, body.dark-mode .sidebar a.active {
+    color: #fff !important;
+}
+
+/* Status badges keep their semantic colours */
+body.dark .status-badge.active, body.dark-mode .status-badge.active { background: #083b2e !important; color: #8ef3be !important; }
+body.dark .status-badge.completed, body.dark-mode .status-badge.completed { background: #083b2e !important; color: #8ef3be !important; }
+body.dark .status-badge.on-hold, body.dark-mode .status-badge.on-hold { background: #3b2e08 !important; color: #fde68a !important; }
+body.dark .status-badge.inactive, body.dark-mode .status-badge.inactive { background: #3b1212 !important; color: #ffb4b4 !important; }
+
+/* Progress text keeps primary colour */
+body.dark .progress-text, body.dark-mode .progress-text { color: var(--dm-primary) !important; }
+
+/* Dropdown menus */
+body.dark .user-dropdown, body.dark-mode .user-dropdown,
+body.dark .notification-dropdown, body.dark-mode .notification-dropdown {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+}
+
+body.dark .dropdown-link:hover, body.dark-mode .dropdown-link:hover {
+    background: rgba(255,255,255,0.06) !important;
+}
+
+/* ============================================================
+   ADDITIONAL DARK-BG OVERRIDES
+   Cards now all get dark bg — keep circular-progress inner white.
+   ============================================================ */
+
+/* Circular progress donut inner circle stays white so the percentage is readable */
+body.dark .circular-progress::before, body.dark-mode .circular-progress::before {
+    background: var(--dm-card) !important;
+}
+body.dark .circular-progress span, body.dark-mode .circular-progress span {
+    color: var(--dm-text) !important;
+}
+
+/* Stat-box number colour (keep primary accent) */
+body.dark .stat-box h3, body.dark-mode .stat-box h3 {
+    color: var(--dm-primary) !important;
+}
+
+/* Team card buttons in dark mode */
+body.dark .teams .btn-small, body.dark-mode .teams .btn-small {
+    background: rgba(255,255,255,0.06) !important;
+    color: var(--dm-text) !important;
+    border-color: var(--dm-border) !important;
+}
+body.dark .teams .btn-small:hover, body.dark-mode .teams .btn-small:hover {
+    background: var(--dm-primary) !important;
+    color: #fff !important;
+}
+
+/* Error row in monitoring */
+body.dark .error-row, body.dark-mode .error-row {
+    background: rgba(255,255,255,0.03) !important;
+    border-left-color: var(--dm-primary) !important;
+}
+
+/* Alert item backgrounds */
+body.dark .alert-item.warning, body.dark-mode .alert-item.warning { background: rgba(245,158,11,0.06) !important; }
+body.dark .alert-item.success, body.dark-mode .alert-item.success { background: rgba(16,185,129,0.06) !important; }
+body.dark .alert-item.info, body.dark-mode .alert-item.info { background: rgba(6,182,212,0.06) !important; }
+
+/* Health status keeps primary colour */
+body.dark .health-status, body.dark-mode .health-status { color: var(--dm-primary) !important; }
+
+/* Error counts keep danger colour */
+body.dark .error-count, body.dark-mode .error-count { color: #ef4444 !important; }
+
+/* Report card metric boxes */
+body.dark .report-card .metric,
+body.dark-mode .report-card .metric {
+    background: rgba(255,255,255,0.04) !important;
+    border-color: var(--dm-border) !important;
+}
+body.dark .report-card .metric-label,
+body.dark-mode .report-card .metric-label {
+    color: var(--dm-subtext) !important;
+}
+body.dark .report-card .metric-value,
+body.dark-mode .report-card .metric-value {
+    color: var(--dm-primary) !important;
+}
+body.dark .report-card .btn-view,
+body.dark-mode .report-card .btn-view {
+    background: rgba(255,255,255,0.04) !important;
+    color: var(--dm-text) !important;
+    border-color: var(--dm-border) !important;
+}
+
+/* Admin tabs bar */
+body.dark .tabs,
+body.dark-mode .tabs {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6) !important;
+}
+body.dark .tab-btn,
+body.dark-mode .tab-btn {
+    color: var(--dm-subtext) !important;
+}
+body.dark .tab-btn:hover,
+body.dark-mode .tab-btn:hover {
+    background: rgba(255,255,255,0.06) !important;
+    color: var(--dm-text) !important;
+}
+body.dark .tab-btn.active,
+body.dark-mode .tab-btn.active {
+    background: var(--dm-primary) !important;
+    color: #fff !important;
+}
+
+/* User menu button in header */
+body.dark .user-menu-btn,
+body.dark-mode .user-menu-btn {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
+}
+body.dark .user-menu-btn:hover,
+body.dark-mode .user-menu-btn:hover {
+    background: rgba(255,255,255,0.06) !important;
+}
+body.dark .user-menu-btn .caret,
+body.dark-mode .user-menu-btn .caret {
+    color: var(--dm-primary) !important;
+}
+
+/* Settings theme buttons */
+body.dark .theme-btn,
+body.dark-mode .theme-btn {
+    background: var(--dm-card) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
+}
+body.dark .theme-btn:hover,
+body.dark-mode .theme-btn:hover {
+    background: rgba(255,255,255,0.08) !important;
+}
+body.dark .theme-btn.active,
+body.dark-mode .theme-btn.active {
+    background: var(--dm-primary) !important;
+    border-color: var(--dm-primary) !important;
+    color: #fff !important;
+}
