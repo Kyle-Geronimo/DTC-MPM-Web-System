@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dropdown Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f3f4f6;
+            padding: 40px;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #111827;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+        .header-demo {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left h2 {
+            color: #374151;
+            font-size: 24px;
+        }
+        /* ===== User Dropdown Styles ===== */
+        #userMenuWrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .user-menu-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff5f5;
+            border: 1.5px solid #fca5a5;
+            border-radius: 8px;
+            padding: 7px 13px 7px 9px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s ease;
+        }
+        .user-menu-btn:hover {
+            background: #fff0f0;
+            border-color: #fca5a5;
+        }
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+        }
+        .user-menu-btn .caret {
+            font-size: 10px;
+            color: #fb7185;
+        }
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 6px);
+            min-width: 190px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.15);
+            z-index: 99999;
+            overflow: hidden;
+        }
+        .user-dropdown.open {
+            display: block;
+        }
+        .user-dropdown-info {
+            padding: 12px 16px 10px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .user-dropdown-info b {
+            display: block;
+            font-size: 14px;
+            color: #111827;
+        }
+        .user-dropdown-info small {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        .dropdown-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 16px;
+            color: #374151;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background .15s;
+        }
+        .dropdown-link:hover {
+            background: #f3f4f6;
+        }
+        .dropdown-link.logout-link {
+            color: #ef4444;
+            border-top: 1px solid #f3f4f6;
+        }
+        .dropdown-link.logout-link:hover {
+            background: #fff5f5;
+        }
+        .instructions {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff5f5;
+            border-left: 4px solid #ef4444;
+            border-radius: 6px;
+        }
+        .instructions h3 {
+            color: #b91c1c;
+            margin-bottom: 10px;
+        }
+        .instructions ol {
+            margin-left: 20px;
+            color: #7f1d1d;
+        }
+        .instructions li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 User Dropdown Menu Test</h1>
+        <p>Click on the "Admin User" button below to see the dropdown menu in action!</p>
+
+        <div class="header-demo">
+            <div class="header-left">
+                <h2>Dashboard Header</h2>
+            </div>
+            <div class="header-right">
+                <div id="userMenuWrapper">
+                    <button class="user-menu-btn" id="userMenuBtn">
+                        <div class="avatar" id="userAvatar">A</div>
+                        <span id="userName">Admin User</span>
+                        <span class="caret">&#9660;</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="user-dropdown-info">
+                            <b id="dropUserName">Admin User</b>
+                            <small>Administrator</small>
+                        </div>
+                        <a href="/ProjectDashboard/page/settings.html" class="dropdown-link">&#9881;&#65039; Settings</a>
+                        <a href="/ProjectDashboard/settings/logout.php" class="dropdown-link logout-link">&#128682; Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>✅ How to Test:</h3>
+            <ol>
+                <li><strong>Click</strong> on the entire "Admin User" button (the blue/purple box with the avatar)</li>
+                <li>The dropdown menu will appear below showing:
+                    <ul>
+                        <li>Admin User (your name)</li>
+                        <li>⚙️ Settings link</li>
+                        <li>🚪 Log Out link</li>
+                    </ul>
+                </li>
+                <li><strong>Click anywhere outside</strong> the dropdown to close it</li>
+                <li>Or press <strong>Escape</strong> key to close it</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // User dropdown toggle functionality
+        (function(){
+            var btn = document.getElementById('userMenuBtn');
+            var menu = document.getElementById('userDropdown');
+            
+            if (!btn || !menu) {
+                console.error('Button or menu not found!');
+                return;
+            }
+
+            // Click button to toggle
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                menu.classList.toggle('open');
+                console.log('Dropdown toggled. Is open:', menu.classList.contains('open'));
+            });
+
+            // Click outside to close
+            document.addEventListener('click', function(e) {
+                if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                    menu.classList.remove('open');
+                }
+            });
+
+            // Escape key to close
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    menu.classList.remove('open');
+                }
+            });
+
+            console.log('User dropdown initialized successfully!');
+        })();
+    </script>
+</body>
+</html>

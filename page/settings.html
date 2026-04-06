@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Monitoring & Project Management System</title>
+    <link rel="stylesheet" href="../css/settings.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/chat.css">
+    <link rel="stylesheet" href="../css/dark-mode.css">
+    <script src="../js/app_core.js" defer></script>
+    <script src="../js/chat.js" defer></script>
+</head>
+<body>
+    <script>(function(){try{const s=JSON.parse(localStorage.getItem('userSettings')||'{}');if(s&&s.theme==='dark'){document.documentElement.setAttribute('data-theme','dark');document.body.classList.add('dark');}}catch(e){} })();</script>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="http://localhost/ProjectDashboard/page/front_panel.html">Front Panel</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/projects.html">Projects</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/monitoring.html">Monitoring</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/tasks.html">Tasks</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/team.html">Team</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/reports.html">Reports</a></li>
+                <li id="adminNavLink" style="display:none"><a href="http://localhost/ProjectDashboard/page/admin.html">Admin</a></li>
+                <!-- Settings and Logout moved to user dropdown -->
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Settings</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell" id="notificationBell">
+                        🔔
+                        <span class="notification-badge" id="notifBadge">0</span>
+                        <div class="notification-panel" id="notifPanel">
+                            <div class="notification-panel-header">
+                                <span>Notifications</span>
+                                <a href="#" id="markAllRead">Mark all read</a>
+                            </div>
+                            <div class="notification-list" id="notifList">
+                                <div class="notification-empty">No notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="userMenuWrapper">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <div class="avatar" id="userAvatar">A</div>
+                            <span id="userName">Admin User</span>
+                            <span class="caret">&#9660;</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-dropdown-info">
+                                <b id="dropUserName">Admin User</b>
+                                <small>Administrator</small>
+                            </div>
+                            <a href="/ProjectDashboard/page/settings.html" class="dropdown-link">&#9881;&#65039; Settings</a>
+                            <a href="/ProjectDashboard/settings/logout.php" class="dropdown-link logout-link">&#128682; Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Settings Content -->
+            <section class="settings-container">
+                <div class="settings-sidebar">
+                    <div class="settings-menu">
+                        <a href="#account" class="settings-link active">Account Settings</a>
+                        <a href="#security" class="settings-link">Security</a>
+                        <a href="#system" class="settings-link">System</a>
+                        <a href="#integration" class="settings-link">Integrations</a>
+                        <a href="#appearance" class="settings-link">Accessibility</a>
+                    </div>
+                </div>
+
+                <div class="settings-panel">
+                    <!-- Account Settings -->
+                    <div class="settings-section" id="account">
+                        <h2>Account Settings</h2>
+                        <form class="settings-form">
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" value="admin@dashboard.com" placeholder="Enter email" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" value="Admin User" placeholder="Enter full name">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" value="+1 234 567 8900" placeholder="Enter phone number">
+                            </div>
+                            <div class="form-group">
+                                <label>Bio</label>
+                                <textarea rows="4" placeholder="Write a short bio">Experienced project manager and system administrator</textarea>
+                            </div>
+                            <button type="submit" class="btn-save">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <!-- Security Settings -->
+                    <div class="settings-section" id="security">
+                        <h2>Security Settings</h2>
+                        <form class="settings-form">
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <input type="password" placeholder="Enter current password">
+                            </div>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" placeholder="Enter new password">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm Password</label>
+                                <input type="password" placeholder="Confirm new password">
+                            </div>
+                            <button type="submit" class="btn-save">Update Password</button>
+                        </form>
+
+                        <div class="security-section">
+                            <h3>Two-Factor Authentication</h3>
+                            <p>Add an extra layer of security to your account</p>
+                            <button class="btn-secondary">Enable 2FA</button>
+                        </div>
+                    </div>
+
+                    <!-- System Settings -->
+                    <div class="settings-section" id="system">
+                        <h2>System Settings</h2>
+                        <div class="settings-options">
+                            <div class="option-group">
+                                <div class="option-header">
+                                    <label class="option-title">Maintenance Mode</label>
+                                    <input type="checkbox" class="toggle">
+                                </div>
+                                <p class="option-desc">Enable maintenance mode for the system</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Integration Settings -->
+                    <div class="settings-section" id="integration">
+                        <h2>Integrations</h2>
+                        <div class="integration-list">
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <h3>GitHub</h3>
+                                    <p>Connect your GitHub repository</p>
+                                </div>
+                                <button class="btn-connect">Connect</button>
+                            </div>
+
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <h3>Slack</h3>
+                                    <p>Integrate with Slack for notifications</p>
+                                </div>
+                                <button class="btn-connect connected">Connected</button>
+                            </div>
+
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <h3>Jira</h3>
+                                    <p>Sync with Jira for issue tracking</p>
+                                </div>
+                                <button class="btn-connect">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appearance Settings -->
+                    <div class="settings-section" id="appearance">
+                        <h2>Appearance</h2>
+                        <div class="settings-options">
+                            <div class="option-group">
+                                <label class="option-title">Theme</label>
+                                <div class="theme-options">
+                                    <button class="theme-btn active" onclick="document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); applyTheme('light');">Light</button>
+                                    <button class="theme-btn" onclick="document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); applyTheme('dark');">Dark</button>
+                                    <button class="theme-btn" onclick="document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); applyTheme('auto');">Auto</button>
+                                </div>
+                            </div>
+
+                            <div class="option-group">
+                                <div class="option-header">
+                                    <label class="option-title">Compact View</label>
+                                    <input type="checkbox" class="toggle">
+                                </div>
+                                <p class="option-desc">Show more information in compact layout</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="../js/settings.js"></script>
+    <script>
+    fetch('../settings/get_user.php').then(r=>r.json()).then(d=>{
+        if(d&&d.full_name){const n=d.full_name;const a=document.getElementById('userAvatar');const s=document.getElementById('userName');const dd=document.getElementById('dropUserName');if(a)a.textContent=n.charAt(0).toUpperCase();if(s)s.textContent=n;if(dd)dd.textContent=n;}
+    }).catch(()=>{});
+    </script>
+    <script>
+    (function(){
+        var btn=document.getElementById('userMenuBtn');
+        var menu=document.getElementById('userDropdown');
+        if(!btn||!menu)return;
+        btn.addEventListener('click',function(e){e.stopPropagation();menu.classList.toggle('open');});
+        document.addEventListener('click',function(e){if(!menu.contains(e.target)&&!btn.contains(e.target)){menu.classList.remove('open');}});
+        document.addEventListener('keydown',function(e){if(e.key==='Escape')menu.classList.remove('open');});
+    })();
+    </script>
+</body>
+</html>
