@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team - Monitoring & Project Management System</title>
+    <link rel="stylesheet" href="../css/team.css?v=1775524580">
+    <link rel="stylesheet" href="../css/common.css?v=1775524580">
+    <link rel="stylesheet" href="../css/chat.css?v=1775524580">
+    <link rel="stylesheet" href="../css/dark-mode.css?v=1775524580">
+    <script src="../js/app_core.js?v=1775524580" defer></script>
+    <script src="../js/chat.js?v=1775524580" defer></script>
+    <script src="../js/team.js?v=1775524580" defer></script>
+</head>
+<body>
+    <script>(function(){try{const s=JSON.parse(localStorage.getItem('userSettings')||'{}');if(s&&s.theme==='dark'){document.documentElement.setAttribute('data-theme','dark');document.body.classList.add('dark');}}catch(e){} })();</script>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="http://localhost/ProjectDashboard/page/front_panel.html">Front Panel</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/projects.html">Projects</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/monitoring.html">Monitoring</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/tasks.html">Tasks</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/team.html" class="active">Team</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/reports.html">Reports</a></li>
+                <li id="adminNavLink" style="display:none"><a href="http://localhost/ProjectDashboard/page/admin.html">Admin</a></li>
+                <!-- Settings and Logout moved to user dropdown -->
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Team Members</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell" id="notificationBell">
+                        🔔
+                        <span class="notification-badge" id="notifBadge">0</span>
+                        <div class="notification-panel" id="notifPanel">
+                            <div class="notification-panel-header">
+                                <span>Notifications</span>
+                                <a href="#" id="markAllRead">Mark all read</a>
+                            </div>
+                            <div class="notification-list" id="notifList">
+                                <div class="notification-empty">No notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="userMenuWrapper">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <div class="avatar" id="userAvatar">A</div>
+                            <span id="userName">Admin User</span>
+                            <span class="caret">&#9660;</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-dropdown-info">
+                                <b id="dropUserName">Admin User</b>
+                                <small>Administrator</small>
+                            </div>
+                            <a href="/ProjectDashboard/page/settings.html" class="dropdown-link">&#9881;&#65039; Settings</a>
+                            <a href="/ProjectDashboard/settings/logout.php" class="dropdown-link logout-link">&#128682; Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="action-bar">
+                <button class="btn-primary" id="openCreateTeam" style="margin-left: -20px;">+ Create Team</button>
+            </div>
+
+            <!-- Team Stats -->
+            <section class="stats-section">
+                <div class="stat-box">
+                    <h3 id="totalMembersCount">-</h3>
+                    <p>Total Members</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="activeTodayCount">-</h3>
+                    <p>Active Today</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="totalTeamsCount">-</h3>
+                    <p>Teams</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="onLeaveCount">-</h3>
+                    <p>On Leave</p>
+                </div>
+            </section>
+
+            <!-- Team Members Grid (populated dynamically by team.js) -->
+            <section class="team-grid">
+                <p>Loading teams...</p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Create Team Modal -->
+    <div id="createTeamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👥 Create New Team</h2>
+                <span class="close-create-team">&times;</span>
+            </div>
+            <form id="createTeamForm">
+                <div class="form-group">
+                    <label for="teamName">Team Name *</label>
+                    <input type="text" id="teamName" name="name" required placeholder="Enter team name">
+                </div>
+                <div class="form-group">
+                    <label for="teamPurpose">Team Purpose *</label>
+                    <textarea id="teamPurpose" name="description" rows="3" placeholder="What is the purpose of this team?" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="teamLead">Team Lead *</label>
+                    <select id="teamLead" name="team_lead" required>
+                        <option value="">Select a team lead...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Select Members</label>
+                    <div id="membersList" class="members-list">
+                        <p>Loading members...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelCreateTeam">Cancel</button>
+                    <button type="submit" class="btn-primary" id="submitCreateTeam">Create Team</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Messages Modal -->
+    <div id="messagesModal" class="modal">
+        <div class="modal-content messaging-modal">
+            <div class="modal-header">
+                <h2>💬 <span id="messagesTitle">Team Messages</span></h2>
+                <span class="close-messages-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="messagesContainer" class="messages-container">
+                    <p>Loading messages...</p>
+                </div>
+            </div>
+            <div class="modal-footer messaging-footer">
+                <textarea id="messageInput" placeholder="Type a message..." rows="3"></textarea>
+                <button id="sendMessageBtn" class="btn-primary">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    fetch('../settings/get_user.php').then(r=>r.json()).then(d=>{
+        if(d&&d.full_name){const n=d.full_name;const a=document.getElementById('userAvatar');const s=document.getElementById('userName');const dd=document.getElementById('dropUserName');if(a)a.textContent=n.charAt(0).toUpperCase();if(s)s.textContent=n;if(dd)dd.textContent=n;}
+    }).catch(()=>{});
+    </script>
+    <script>
+    (function(){
+        var btn=document.getElementById('userMenuBtn');
+        var menu=document.getElementById('userDropdown');
+        if(!btn||!menu)return;
+        btn.addEventListener('click',function(e){e.stopPropagation();menu.classList.toggle('open');});
+        document.addEventListener('click',function(e){if(!menu.contains(e.target)&&!btn.contains(e.target)){menu.classList.remove('open');}});
+        document.addEventListener('keydown',function(e){if(e.key==='Escape')menu.classList.remove('open');});
+    })();
+    </script>
+</body>
+</html>
