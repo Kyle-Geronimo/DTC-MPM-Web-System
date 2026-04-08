@@ -1,0 +1,469 @@
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    ADMIN PANEL DATABASE STRUCTURE                           │
+│                    Project Management System                                │
+│                    Updated: March 18, 2026                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+TABLE OVERVIEW (16 Tables)
+═══════════════════════════════════════════════════════════════════════════════
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 1. USERS                                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Core user accounts and authentication                                      │
+│ Used in: Overview Tab, Users Tab                                          │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT(11)        AUTO_INCREMENT                          │
+│     username        VARCHAR(50)    UNIQUE, NOT NULL                        │
+│     email           VARCHAR(100)   UNIQUE, NOT NULL                        │
+│     password        VARCHAR(255)   NOT NULL [SHA256 Hash]                 │
+│     full_name       VARCHAR(100)   NOT NULL                                │
+│     phone           VARCHAR(20)                                            │
+│     department      VARCHAR(50)                                            │
+│     role            VARCHAR(50)    DEFAULT 'user'                         │
+│     status          VARCHAR(20)    DEFAULT 'active'                       │
+│     last_login      DATETIME                                               │
+│     login_count     INT(11)        DEFAULT 0                               │
+│     avatar_url      VARCHAR(255)                                           │
+│     created_at      TIMESTAMP      DEFAULT current_timestamp()             │
+│     updated_at      TIMESTAMP      ON UPDATE current_timestamp()           │
+│ IDX idx_status      (status)                                               │
+│ IDX idx_role        (role)                                                 │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 2. PROJECTS                                                                │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Project information and tracking                                           │
+│ Used in: Overview Tab, Projects Tab                                       │
+├────────────────────────────────────────────────────────────────────────────┤
+│     id              VARCHAR(255)   [e.g. PROJ-20260317-xxxx]              │
+│     name            VARCHAR(255)                                           │
+│     description     VARCHAR(255)                                           │
+│     status          VARCHAR(255)   DEFAULT 'active'                       │
+│     start_date      INT(255)       [Unix timestamp]                       │
+│     end_date        INT(255)       [Unix timestamp]                       │
+│     progress        INT(255)       (0-100)                                │
+│     budget          DECIMAL(15,2)                                          │
+│     spent           DECIMAL(15,2)  DEFAULT 0.00                           │
+│     team_id         VARCHAR(255)                                           │
+│     created_by      VARCHAR(255)   [user id as string]                    │
+│     created_at      VARCHAR(255)                                           │
+│     updated_at      VARCHAR(255)                                           │
+│ IDX idx_projects_status (status)                                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 3. TASKS                                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Task assignments and status tracking                                       │
+│ Used in: Overview Tab (task count), Tasks Tab                             │
+├────────────────────────────────────────────────────────────────────────────┤
+│     id              VARCHAR(255)   [e.g. TASK-20260318-xxxx]              │
+│     title           VARCHAR(255)                                           │
+│     description     VARCHAR(255)                                           │
+│     project_id      INT(255)                                               │
+│     assigned_to     VARCHAR(255)   [user id as string]                    │
+│     priority        VARCHAR(255)   DEFAULT 'medium'                       │
+│     status          VARCHAR(255)   DEFAULT 'todo'                         │
+│     progress        INT(11)        DEFAULT 0                               │
+│     estimated_hours DECIMAL(5,2)                                           │
+│     actual_hours    DECIMAL(5,2)                                           │
+│     completed_date  DATETIME                                               │
+│     due_date        INT(255)       [Unix timestamp]                       │
+│     created_at      VARCHAR(255)                                           │
+│     updated_at      VARCHAR(255)                                           │
+│ IDX idx_tasks_project   (project_id)                                       │
+│ IDX idx_tasks_assigned  (assigned_to)                                      │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 4. TEAMS                                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Team/department organization                                               │
+│ Used in: Team Tab, Projects Tab                                           │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT(11)        AUTO_INCREMENT                          │
+│     name            VARCHAR(255)                                           │
+│     description     VARCHAR(255)                                           │
+│ FK  team_lead       INT(11)        → users(id) ON DELETE SET NULL         │
+│     created_at      TIMESTAMP      DEFAULT current_timestamp()             │
+│     updated_at      TIMESTAMP      ON UPDATE current_timestamp()           │
+│ IDX fk_team_lead    (team_lead)                                            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 5. TEAM_MEMBERS                                                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Many-to-many relationship: users ↔ teams                                  │
+│ Used in: Team Tab (Members button)                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT(11)        AUTO_INCREMENT                          │
+│ FK  team_id         INT(11)        → teams(id) ON DELETE CASCADE NOT NULL │
+│ FK  user_id         INT(11)        → users(id) ON DELETE CASCADE NOT NULL │
+│     role            VARCHAR(50)    DEFAULT 'member'                       │
+│     joined_at       TIMESTAMP      DEFAULT current_timestamp()             │
+│ UK  unique_team_user (team_id, user_id)                                   │
+│ IDX fk_tm_user      (user_id)                                             │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 6. ACTIVITY_LOG                                                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│ System-wide activity audit trail (legacy)                                  │
+│ Used in: Activity Tab, Overview Tab (Recent Activity)                     │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT(11)        AUTO_INCREMENT                          │
+│ FK  user_id         INT(11)        → users(id) ON DELETE SET NULL         │
+│     action          VARCHAR(255)   [login, logout, create, etc.]         │
+│     entity_type     VARCHAR(255)   [user, project, task, team]           │
+│     entity_id       INT(255)                                               │
+│     description     VARCHAR(255)                                           │
+│     created_at      TIMESTAMP      DEFAULT current_timestamp()             │
+│ IDX idx_activity_user (user_id)                                            │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 7. AUDIT_LOG                                                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Detailed audit trail with old/new values and client info                   │
+│ Used in: Admin audit tracking                                             │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT(11)        AUTO_INCREMENT                          │
+│ FK  user_id         INT(11)        → users(id)                            │
+│     action          VARCHAR(100)   NOT NULL                                │
+│     entity_type     VARCHAR(50)                                            │
+│     entity_id       VARCHAR(100)                                           │
+│     old_values      LONGTEXT       [JSON]                                 │
+│     new_values      LONGTEXT       [JSON]                                 │
+│     ip_address      VARCHAR(45)                                            │
+│     user_agent      VARCHAR(500)                                           │
+│     created_at      TIMESTAMP      DEFAULT current_timestamp()             │
+│ IDX idx_user        (user_id)                                              │
+│ IDX idx_action      (action)                                               │
+│ IDX idx_entity      (entity_type, entity_id)                               │
+│ IDX idx_created     (created_at)                                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 8. PASSWORD_RESET_TOKENS                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Password reset requests requiring admin approval                          │
+│ Used in: Password Resets Tab                                              │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id                  INT(11)        AUTO_INCREMENT                      │
+│     email               VARCHAR(100)   NOT NULL                            │
+│     token               VARCHAR(255)   NOT NULL [SHA256 token]            │
+│     new_password_hash   VARCHAR(255)   [SHA256 Hash]                     │
+│     approval_status     ENUM           [pending/approved/rejected]       │
+│ FK  admin_id            INT(11)        → users(id)                        │
+│     expires_at          DATETIME       NOT NULL [1 hour from creation]   │
+│     created_at          TIMESTAMP      DEFAULT current_timestamp()         │
+│     used                TINYINT(1)     DEFAULT 0 [0=unused, 1=used]      │
+│     used_at             DATETIME                                           │
+│ IDX idx_token           (token)                                            │
+│ IDX idx_email           (email)                                            │
+│ IDX idx_expires         (expires_at)                                       │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 9. NOTIFICATIONS                                                           │
+├────────────────────────────────────────────────────────────────────────────┤
+│ User notifications (login, project, task alerts)                          │
+│ Used in: Header notification bell on all pages                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT(11)        AUTO_INCREMENT                          │
+│     user_id         INT(11)        NOT NULL                                │
+│     type            VARCHAR(50)    NOT NULL DEFAULT 'info'                │
+│     title           VARCHAR(200)   NOT NULL                                │
+│     message         TEXT                                                   │
+│     link            VARCHAR(500)                                           │
+│     is_read         TINYINT(1)     DEFAULT 0                               │
+│     created_at      TIMESTAMP      DEFAULT current_timestamp()             │
+│ IDX idx_user_read   (user_id, is_read)                                     │
+│ IDX idx_created     (created_at)                                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 10. SYSTEM_MONITORING                                                      │
+├────────────────────────────────────────────────────────────────────────────┤
+│ System performance metrics and thresholds                                  │
+│ Used in: Monitoring Tab                                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│     id                  VARCHAR(255)                                       │
+│     metric_name         VARCHAR(255)   [CPU Usage, RAM, Disk, etc.]      │
+│     metric_value        INT(255)                                           │
+│     unit                INT(255)                                           │
+│     threshold_warning   VARCHAR(255)                                       │
+│     threshold_critical  VARCHAR(255)                                       │
+│     status              VARCHAR(255)   [normal, warning, critical]       │
+│     recorded_at         VARCHAR(255)                                       │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 11. ALERTS                                                                 │
+├────────────────────────────────────────────────────────────────────────────┤
+│ System alerts and notifications                                            │
+│ Used in: Monitoring Tab (alerts section)                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│     id              VARCHAR(255)                                           │
+│     alert_type      VARCHAR(255)   [system, security, info, success]     │
+│     subject         VARCHAR(255)                                           │
+│     message         VARCHAR(255)                                           │
+│     severity        VARCHAR(255)   [info, warning, critical, success]    │
+│     status          VARCHAR(255)   [active, resolved]                    │
+│     created_at      VARCHAR(255)                                           │
+│     resolved_at     VARCHAR(255)                                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 12. SYSTEM_SETTINGS                                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Application-wide configuration key-value store                             │
+│ Used in: Settings Tab, Admin Panel                                        │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT(11)        AUTO_INCREMENT                          │
+│     setting_key     VARCHAR(100)   UNIQUE, NOT NULL                        │
+│     setting_value   TEXT                                                   │
+│     setting_type    ENUM           [string/number/boolean/json]           │
+│     description     TEXT                                                   │
+│     is_public       TINYINT(1)     DEFAULT 0                               │
+│ FK  updated_by      INT(11)        → users(id)                            │
+│     updated_at      TIMESTAMP      ON UPDATE current_timestamp()           │
+│ IDX idx_key         (setting_key)                                          │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 13. ADMIN                                                                  │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Admin panel table-count metadata (single row)                              │
+│ Used in: Admin dashboard overview                                         │
+├────────────────────────────────────────────────────────────────────────────┤
+│     users               VARCHAR(225)                                       │
+│     projects            VARCHAR(225)                                       │
+│     tasks               VARCHAR(225)                                       │
+│     teams               INT(225)                                           │
+│     team_members        VARCHAR(225)                                       │
+│     activity_log        VARCHAR(225)                                       │
+│     password_reset_tokens VARCHAR(225)                                     │
+│     system_monitoring   VARCHAR(225)                                       │
+│     alerts              VARCHAR(225)                                       │
+│     reports             VARCHAR(225)                                       │
+│     settings            VARCHAR(225)                                       │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 14. ARCHIVED_USERS                                                         │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Snapshot of deactivated/deleted user data                                  │
+│ Used in: Admin user management                                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id                INT(11)        AUTO_INCREMENT                        │
+│     original_user_id  INT(11)                                              │
+│     username          VARCHAR(50)                                          │
+│     email             VARCHAR(100)                                         │
+│     full_name         VARCHAR(100)                                         │
+│     phone             VARCHAR(20)                                          │
+│     department        VARCHAR(50)                                          │
+│     role              VARCHAR(50)                                          │
+│     status            VARCHAR(20)                                          │
+│     data              LONGTEXT       [Full JSON snapshot]                 │
+│     archived_at       TIMESTAMP      DEFAULT current_timestamp()           │
+│ FK  archived_by       INT(11)        → users(id)                          │
+│     reason            VARCHAR(255)                                         │
+│ IDX idx_archived_at   (archived_at)                                        │
+│ IDX idx_original_user (original_user_id)                                   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 15. EMAIL_QUEUE                                                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Outbound email queue (welcome emails, notifications)                      │
+│ Used in: Registration, password reset flows                               │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              INT(11)        AUTO_INCREMENT                          │
+│     to_email        VARCHAR(255)   NOT NULL                                │
+│     to_name         VARCHAR(100)                                           │
+│     subject         VARCHAR(255)   NOT NULL                                │
+│     body            TEXT           NOT NULL [HTML]                         │
+│     status          ENUM           [pending/sent/failed]                  │
+│     attempts        INT(11)        DEFAULT 0                               │
+│     error_message   TEXT                                                   │
+│     created_at      TIMESTAMP      DEFAULT current_timestamp()             │
+│     sent_at         TIMESTAMP                                              │
+│ IDX idx_status      (status)                                               │
+│ IDX idx_created     (created_at)                                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 16. USER_SESSIONS                                                          │
+├────────────────────────────────────────────────────────────────────────────┤
+│ Active user session tracking                                               │
+│ Used in: Session management, active-user counts                           │
+├────────────────────────────────────────────────────────────────────────────┤
+│ PK  id              VARCHAR(128)   NOT NULL [PHP session id]              │
+│     user_id         INT(11)        NOT NULL                                │
+│     ip_address      VARCHAR(45)                                            │
+│     user_agent      VARCHAR(500)                                           │
+│     last_activity   TIMESTAMP      ON UPDATE current_timestamp()           │
+│     created_at      TIMESTAMP      DEFAULT current_timestamp()             │
+│ IDX idx_user        (user_id)                                              │
+│ IDX idx_activity    (last_activity)                                        │
+└────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+RELATIONSHIP DIAGRAM
+═══════════════════════════════════════════════════════════════════════════════
+
+                              ┌──────────────┐
+                              │    USERS     │
+                              │  (Core Auth) │
+                              └───────┬──────┘
+                                      │
+          ┌───────────┬───────────┬───┼───┬───────────┬──────────────┐
+          │           │           │   │   │           │              │
+          ▼           ▼           ▼   │   ▼           ▼              ▼
+  ┌──────────────┐ ┌────────┐ ┌──────┴──────┐ ┌──────────┐ ┌──────────────┐
+  │ ACTIVITY_LOG │ │ AUDIT  │ │TEAM_MEMBERS │ │  TEAMS   │ │ARCHIVED_USERS│
+  │  (user_id)   │ │  _LOG  │ │  (user_id)  │ │(team_lead│ │(archived_by) │
+  └──────────────┘ │(user_id│ └──────┬──────┘ │ → users) │ └──────────────┘
+                   └────────┘        │        └──────────┘
+                                     │             ▲
+                                     └─────────────┘
+                                      (team_id → teams.id)
+
+     ┌──────────────────────┐       ┌──────────────┐
+     │PASSWORD_RESET_TOKENS │       │ USER_SESSIONS │
+     │     (admin_id)       │───┐   │  (user_id)    │
+     └──────────────────────┘   │   └───────────────┘
+                                ▼
+                          ┌──────────┐
+                          │  USERS   │
+                          └──────────┘
+
+     ┌──────────────┐      ┌──────────────┐      ┌──────────────┐
+     │NOTIFICATIONS │      │ EMAIL_QUEUE  │      │SYSTEM_SETTINGS│
+     │  (user_id)   │      │ (standalone) │      │ (updated_by)  │
+     └──────────────┘      └──────────────┘      └───────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
+FOREIGN KEY CONSTRAINTS
+═══════════════════════════════════════════════════════════════════════════════
+
+  activity_log.user_id        → users.id      ON DELETE SET NULL
+  archived_users.archived_by  → users.id
+  teams.team_lead             → users.id      ON DELETE SET NULL
+  team_members.team_id        → teams.id      ON DELETE CASCADE
+  team_members.user_id        → users.id      ON DELETE CASCADE
+
+═══════════════════════════════════════════════════════════════════════════════
+ADMIN PANEL TAB MAPPING
+═══════════════════════════════════════════════════════════════════════════════
+
+📈 OVERVIEW TAB
+  ├─ users              → Total Users count
+  ├─ projects           → Active Projects count
+  ├─ tasks              → Total Tasks count
+  ├─ activity_log       → Active Today count
+  └─ activity_log       → Recent System Activity list
+
+👥 USERS TAB
+  ├─ users              → User listing, search, CRUD operations
+  └─ archived_users     → Deactivated user snapshots
+
+📁 PROJECTS TAB
+  ├─ projects           → Project listing, statistics
+  ├─ users              → Created by information
+  └─ teams              → Team assignments
+
+👥 TEAM TAB
+  ├─ teams              → Team cards with name, description, lead
+  ├─ team_members       → Member assignments per team
+  └─ users              → Available users for selection
+
+📋 ACTIVITY TAB
+  ├─ activity_log       → Legacy activity entries
+  ├─ audit_log          → Detailed audit trail with values
+  └─ users              → User names for activities
+
+🔐 PASSWORD RESETS TAB
+  ├─ password_reset_tokens  → All reset requests
+  ├─ users                  → User info, password updates
+  └─ activity_log           → Log approve/reject actions
+
+🔔 NOTIFICATIONS
+  └─ notifications          → Per-user notification feed
+
+⚙️ SETTINGS TAB
+  └─ system_settings        → Application configuration
+
+📊 MONITORING TAB
+  ├─ system_monitoring      → Live metrics
+  └─ alerts                 → System alerts
+
+🗄️ DATABASE TAB
+  └─ information_schema.TABLES  → Table statistics
+
+═══════════════════════════════════════════════════════════════════════════════
+KEY STATISTICS QUERIES
+═══════════════════════════════════════════════════════════════════════════════
+
+Total Users:
+  SELECT COUNT(*) FROM users
+
+Active Projects:
+  SELECT COUNT(*) FROM projects WHERE status = 'active'
+
+Total Tasks:
+  SELECT COUNT(*) FROM tasks
+
+Active Users Today:
+  SELECT COUNT(DISTINCT user_id) FROM activity_log
+  WHERE DATE(created_at) = CURDATE()
+
+Pending Password Resets:
+  SELECT COUNT(*) FROM password_reset_tokens
+  WHERE approval_status = 'pending' AND expires_at > NOW()
+
+Total Teams:
+  SELECT COUNT(*) FROM teams
+
+Members in a Team:
+  SELECT u.full_name, u.email, tm.role, tm.joined_at
+  FROM team_members tm
+  INNER JOIN users u ON u.id = tm.user_id
+  WHERE tm.team_id = ?
+
+Unread Notifications:
+  SELECT COUNT(*) FROM notifications
+  WHERE user_id = ? AND is_read = 0
+
+═══════════════════════════════════════════════════════════════════════════════
+FILE LOCATIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+Database Schema SQL:
+  └─ settings/database_setup.sql
+
+Database Documentation:
+  └─ ADMIN_DATABASE_REFERENCE.md
+
+Admin Panel Files:
+  ├─ page/admin.html              (Frontend interface)
+  ├─ css/admin.css                (Styling)
+  ├─ js/admin.js                  (JavaScript logic)
+  └─ settings/admin_api.php       (Backend API)
+
+Team Feature Files:
+  ├─ page/team.html               (Team grid page)
+  ├─ js/team.js                   (Team JS logic)
+  ├─ css/team.css                 (Team styling)
+  ├─ settings/add_team.php        (INSERT team + members)
+  ├─ settings/update_team.php     (UPDATE team + members)
+  ├─ settings/delete_team.php     (DELETE team + members)
+  ├─ settings/get_teams.php       (GET all teams)
+  ├─ settings/get_team_members.php        (GET members)
+  └─ settings/get_team_members_by_id.php  (GET members by team_id)
+
+═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Monitoring & Project Management System</title>
+    <link rel="stylesheet" href="../css/dashboard.css?v=1775524580">
+    <link rel="stylesheet" href="../css/common.css?v=1775561200">
+    <link rel="stylesheet" href="../css/chat.css?v=1775524580">
+    <link rel="stylesheet" href="../css/dark-mode.css?v=1775558600">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js?v=1775524580"></script>
+    <script src="../js/app_core.js?v=1775558600" defer></script>
+    <script src="../js/chat.js?v=1775524580" defer></script>
+    <style>
+        /* Toast Notification Styles */
+        #toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:10px;}
+        .toast{padding:12px 20px;border-radius:8px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.15);display:flex;align-items:center;gap:10px;min-width:280px;max-width:420px;animation:slideIn .3s ease;cursor:pointer;transition:opacity .3s}
+        .toast.removing{animation:slideOut .3s ease forwards}
+        .toast-success{background:#10b981}.toast-error{background:#800000}.toast-warning{background:#f59e0b}.toast-info{background:#800000}
+        @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+        @keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}
+        /* Notification Bell */
+        .notification-bell{position:relative;cursor:pointer;font-size:20px;margin-right:15px}
+        .notification-badge{position:absolute;top:-6px;right:-8px;background:#800000;color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center;display:none}
+        .notification-panel{position:absolute;top:40px;right:0;width:340px;max-height:400px;background:#fff;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.15);z-index:9999;display:none;overflow:hidden}
+        .notification-panel.show{display:block}
+        .notification-panel-header{padding:12px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;font-weight:600}
+        .notification-panel-header a{font-size:12px;color:#800000;text-decoration:none}
+        .notification-list{max-height:340px;overflow-y:auto}
+        .notification-item{padding:12px 16px;border-bottom:1px solid #f3f4f6;cursor:pointer;transition:background .2s}
+        .notification-item:hover{background:#f9fafb}
+        .notification-item.unread{background:#E0CCCC;border-left:3px solid #800000}
+        .notification-item .notif-msg{font-size:13px;color:#374151}
+        .notification-item .notif-time{font-size:11px;color:#9ca3af;margin-top:4px}
+        .notification-empty{padding:30px;text-align:center;color:#9ca3af;font-size:14px}
+        /* Session Warning */
+        .session-warning-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center}
+        .session-warning-box{background:#fff;border-radius:12px;padding:30px;text-align:center;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+        .session-warning-box h3{margin:0 0 10px;color:#f59e0b}
+        .session-warning-box button{margin-top:15px;padding:8px 24px;background:#800000;color:#fff;border:none;border-radius:6px;cursor:pointer}
+        /* ===== User Dropdown ===== */
+        #userMenuWrapper{position:relative;display:inline-block}
+        .user-menu-btn{display:inline-flex;align-items:center;gap:8px;background:#E0CCCC;border:1.5px solid #B07070;border-radius:8px;padding:7px 13px 7px 9px;cursor:pointer;font-size:14px;font-weight:500;color:#374151}
+        .user-menu-btn:hover{background:#D9BFBF;border-color:#B07070}
+        .user-menu-btn .caret{font-size:10px;color:#994040}
+        .user-dropdown{display:none;position:absolute;right:0;top:calc(100% + 6px);min-width:190px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.15);z-index:99999;overflow:hidden}
+        .user-dropdown.open{display:block}
+        .user-dropdown-info{padding:12px 16px 10px;border-bottom:1px solid #f3f4f6}
+        .user-dropdown-info b{display:block;font-size:14px;color:#111827}
+        .user-dropdown-info small{font-size:12px;color:#9ca3af}
+        .dropdown-link{display:flex;align-items:center;gap:10px;padding:11px 16px;color:#374151;text-decoration:none;font-size:14px;transition:background .15s}
+        .dropdown-link:hover{background:#f3f4f6}
+        .dropdown-link.logout-link{color:#800000;border-top:1px solid #f3f4f6}
+        .dropdown-link.logout-link:hover{background:#E0CCCC}
+    </style>
+</head>
+<body class="dashboard">
+    <script>(function(){try{const s=JSON.parse(localStorage.getItem('userSettings')||'{}');if(s&&s.theme==='dark'){document.documentElement.setAttribute('data-theme','dark');document.body.classList.add('dark');}}catch(e){} })();</script>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="http://localhost/ProjectDashboard/page/dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/projects.html">Projects</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/tasks.html">Tasks</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/team.php">Team</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/reports.html">Reports</a></li>
+                <li id="adminNavLink" style="display:none"><a href="http://localhost/ProjectDashboard/page/admin.html">Admin</a></li>
+                <!-- Settings and Logout moved to user dropdown -->
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div id="systemStatus" class="system-status" title="System status" style="display:inline-flex;align-items:center;gap:8px;margin-right:12px;font-size:13px;color:#374151"></div>
+                    <div id="quickStats" style="display:inline-flex;align-items:center;gap:12px;margin-right:12px;font-size:13px;color:#374151">
+                        <div class="quick-stat" style="display:inline-flex;flex-direction:column;align-items:center;min-width:72px;">
+                            <span style="font-size:16px;font-weight:700" id="q_activeProjects">...</span>
+                            <small style="color:#6b7280">Projects</small>
+                        </div>
+                        <div class="quick-stat" style="display:inline-flex;flex-direction:column;align-items:center;min-width:72px;">
+                            <span style="font-size:16px;font-weight:700" id="q_pendingTasks">...</span>
+                            <small style="color:#6b7280">Pending</small>
+                        </div>
+                        <div class="quick-stat" style="display:inline-flex;flex-direction:column;align-items:center;min-width:72px;">
+                            <span style="font-size:16px;font-weight:700" id="q_completedTasks">...</span>
+                            <small style="color:#6b7280">Completed</small>
+                        </div>
+                        <div class="quick-stat" style="display:inline-flex;flex-direction:column;align-items:center;min-width:72px;">
+                            <span style="font-size:16px;font-weight:700" id="q_teamMembers">...</span>
+                            <small style="color:#6b7280">Team</small>
+                        </div>
+                    </div>
+                    <div class="notification-bell" id="notificationBell">
+                        🔔
+                        <span class="notification-badge" id="notifBadge">0</span>
+                        <div class="notification-panel" id="notifPanel">
+                            <div class="notification-panel-header">
+                                <span>Notifications</span>
+                                <a href="#" id="markAllRead">Mark all read</a>
+                            </div>
+                            <div class="notification-list" id="notifList">
+                                <div class="notification-empty">No notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <div id="userMenuWrapper">
+                        <!-- TEST EDIT 123 -->
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <div class="avatar" id="userAvatar">A</div>
+                            <span id="userName">Admin User</span>
+                            <span class="caret">&#9660;</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-dropdown-info">
+                                <b id="dropUserName">Admin User</b>
+                                <small>Administrator</small>
+                            </div>
+                            <a href="/ProjectDashboard/page/settings.html" class="dropdown-link">&#9881;&#65039; Settings</a>
+                            <a href="/ProjectDashboard/settings/logout.php" class="dropdown-link logout-link">&#128682; Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Statistics -->
+            <section class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-icon">📁</div>
+                    <div class="stat-info">
+                        <h3>Active Projects</h3>
+                        <p class="stat-value" id="activeProjectsCount">...</p>
+                        <p class="stat-change" id="projectsThisWeek">Loading...</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3>Completed Tasks</h3>
+                        <p class="stat-value" id="completedTasksCount">...</p>
+                        <p class="stat-change" id="tasksToday">Loading...</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <h3>Team Members</h3>
+                        <p class="stat-value" id="teamMembersCount">...</p>
+                        <p class="stat-change" id="usersOnline">Loading...</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-info">
+                        <h3>Open Issues</h3>
+                        <p class="stat-value" id="openIssuesCount">...</p>
+                        <p class="stat-change" id="criticalIssues">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Charts -->
+            <section class="dashboard-section">
+                <div class="chart-container">
+                    <h2>Project Due Dates</h2>
+                    <canvas id="projectsLineChart" style="max-width:100%;height:220px;margin-bottom:12px;"></canvas>
+                    <div class="progress-bars" id="projectProgressBars">
+                        <!-- Will be populated dynamically from database -->
+                        <div class="progress-item">
+                            <label>Loading projects...</label>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span>0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activities">
+                    <h2>Recent Activities</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-time">10:30 AM</span>
+                            <span class="activity-text">John completed task "Update Database Schema"</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">09:15 AM</span>
+                            <span class="activity-text">Sarah created new project "Mobile App v2"</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">08:45 AM</span>
+                            <span class="activity-text">System deployed new version to production</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">Yesterday</span>
+                            <span class="activity-text">Team meeting completed for Q1 Planning</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="actions-section">
+                <h2>Quick Actions</h2>
+                <div class="action-buttons">
+                    <button class="action-btn" id="newProjectBtn">+ New Project</button>
+                    <button class="action-btn" id="assignTaskBtn">+ Assign Task</button>
+                    <button class="action-btn" id="scheduleMeetingBtn">📅 Schedule Meeting</button>
+                    <button class="action-btn" id="addTeamBtn">+ Add Team</button>
+                    <button class="action-btn" id="openAddMemberBtn">+ Add Member</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- New Project Modal -->
+    <div id="newProjectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📁 Create New Project</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="newProjectForm">
+                <div class="form-group">
+                    <label for="projectName">Project Name *</label>
+                    <input type="text" id="projectName" name="name" required placeholder="Enter project name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectDescription">Description</label>
+                    <textarea id="projectDescription" name="description" rows="3" placeholder="Brief description of the project"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectStartDate">Start Date *</label>
+                        <input type="date" id="projectStartDate" name="start_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectEndDate">End Date *</label>
+                        <input type="date" id="projectEndDate" name="end_date" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectStatus">Status</label>
+                        <select id="projectStatus" name="status">
+                            <option value="active">Active</option>
+                            <option value="on-hold">On Hold</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectProgress">Initial Progress (%)</label>
+                        <input type="number" id="projectProgress" name="progress" min="0" max="100" value="0" placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn-primary" id="submitProjectBtn">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assign Task Modal -->
+    <div id="assignTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✅ Assign New Task</h2>
+                <span class="close-task">&times;</span>
+            </div>
+            <form id="assignTaskForm">
+                <div class="form-group">
+                    <label for="taskTitle">Task Title *</label>
+                    <input type="text" id="taskTitle" name="title" required placeholder="Enter task title">
+                </div>
+                
+                <div class="form-group">
+                    <label for="taskDescription">Description</label>
+                    <textarea id="taskDescription" name="description" rows="3" placeholder="Task description"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskPriority">Priority *</label>
+                        <select id="taskPriority" name="priority" required>
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskStatus">Status</label>
+                        <select id="taskStatus" name="status">
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskDueDate">Due Date *</label>
+                        <input type="date" id="taskDueDate" name="due_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskEstimatedHours">Estimated Hours</label>
+                        <input type="number" id="taskEstimatedHours" name="estimated_hours" min="0" step="0.5" placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary cancel-task">Cancel</button>
+                    <button type="submit" class="btn-primary" id="submitTaskBtn">Assign Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Schedule Meeting Modal -->
+    <div id="scheduleMeetingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📅 Schedule Meeting</h2>
+                <span class="close-meeting">&times;</span>
+            </div>
+            <form id="scheduleMeetingForm">
+                <div class="form-group">
+                    <label for="meetingTitle">Meeting Title *</label>
+                    <input type="text" id="meetingTitle" name="title" required placeholder="Enter meeting title">
+                </div>
+                
+                <div class="form-group">
+                    <label for="meetingDescription">Agenda</label>
+                    <textarea id="meetingDescription" name="description" rows="3" placeholder="Meeting agenda and notes"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="meetingDate">Date *</label>
+                        <input type="date" id="meetingDate" name="meeting_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="meetingTime">Time *</label>
+                        <input type="time" id="meetingTime" name="meeting_time" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="meetingDuration">Duration (hours)</label>
+                        <input type="number" id="meetingDuration" name="duration" min="0.5" step="0.5" value="1" placeholder="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="meetingPriority">Priority</label>
+                        <select id="meetingPriority" name="priority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary cancel-meeting">Cancel</button>
+                    <button type="submit" class="btn-primary" id="submitMeetingBtn">Schedule Meeting</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Team Modal -->
+    <div id="addTeamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👥 Add Team</h2>
+                <span class="close-member">&times;</span>
+            </div>
+            <form id="addTeamForm">
+                <div class="form-group">
+                    <label for="teamName">Team Name *</label>
+                    <input type="text" id="teamName" name="name" required placeholder="Enter team name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="teamDescription">Description</label>
+                    <textarea id="teamDescription" name="description" rows="3" placeholder="Team description and responsibilities"></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary cancel-member">Cancel</button>
+                    <button type="submit" class="btn-primary" id="submitTeamBtn">Add Team</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Member Modal (for dashboard quick add) -->
+    <div id="addMemberModalDashboard" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👥 Add Team Member</h2>
+                <span class="close-add-member">&times;</span>
+            </div>
+            <form id="addMemberFormDashboard">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstNameDash">First Name</label>
+                        <input type="text" id="firstNameDash" name="firstname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastNameDash">Last Name</label>
+                        <input type="text" id="lastNameDash" name="lastname" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="emailDash">Email</label>
+                    <input type="email" id="emailDash" name="email" required readonly>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="memberRoleDash">Role</label>
+                        <input type="text" id="memberRoleDash" name="role" placeholder="Developer, QA, Manager">
+                    </div>
+                    <div class="form-group">
+                        <label for="memberTeamDash">Team</label>
+                        <select id="memberTeamDash" name="team_id">
+                            <option value="">Unassigned</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelAddMemberDash">Cancel</button>
+                    <button type="submit" class="btn-primary" id="submitAddMemberDash">Add Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/dashboard.js?v=1775524580"></script>
+    <script>
+    console.log('=== FETCH USER START ===');
+    fetch('../settings/get_user.php').then(r=>r.json()).then(d=>{
+        console.log('User data received:', d);
+        if(d&&d.full_name){const n=d.full_name;const a=document.getElementById('userAvatar');const s=document.getElementById('userName');const dd=document.getElementById('dropUserName');if(a)a.textContent=n.charAt(0).toUpperCase();if(s)s.textContent=n;if(dd)dd.textContent=n;}
+    }).catch((err)=>{console.error('User fetch error:', err);});
+    </script>
+    <script>
+    console.log('=== USER DROPDOWN SCRIPT START ===');
+    (function(){
+        var btn=document.getElementById('userMenuBtn');
+        var menu=document.getElementById('userDropdown');
+        console.log('Button element:', btn);
+        console.log('Menu element:', menu);
+        if(!btn||!menu){
+            console.error('ERROR: Button or menu not found!');
+            return;
+        }
+        btn.addEventListener('click',function(e){
+            e.stopPropagation();
+            menu.classList.toggle('open');
+            console.log('CLICKED! Dropdown is now:', menu.classList.contains('open') ? 'OPEN' : 'CLOSED');
+        });
+        document.addEventListener('click',function(e){if(!menu.contains(e.target)&&!btn.contains(e.target)){menu.classList.remove('open');}});
+        document.addEventListener('keydown',function(e){if(e.key==='Escape')menu.classList.remove('open');});
+        console.log('✅ User dropdown initialized successfully!');
+    })();
+    </script>
+</body>
+</html>
