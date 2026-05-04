@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Project Management System</title>
+    <link rel="stylesheet" href="../css/admin.css?v=1775553600">
+    <link rel="stylesheet" href="../css/common.css?v=1775561200">
+    <link rel="stylesheet" href="../css/chat.css?v=1775524580">
+    <link rel="stylesheet" href="../css/dark-mode.css?v=1775558600">
+    <link rel="stylesheet" href="../css/ui-components.css?v=1">
+    <script src="../js/app_core.js?v=1775571500" defer></script>
+    <script src="../js/chat.js?v=1775524580" defer></script>
+    <script src="../js/ui-components.js?v=1" defer></script>
+</head>
+<body class="page app-page app-page--admin">
+    <script>(function(){try{const s=JSON.parse(localStorage.getItem('userSettings')||'{}');if(s&&s.theme==='dark'){document.documentElement.setAttribute('data-theme','dark');document.body.classList.add('dark');}}catch(e){} })();</script>
+    <!-- Loading Spinner Overlay -->
+    <div id="loadingOverlay"><div class="spinner"></div><div class="spinner-text">Loading...</div></div>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="http://localhost/ProjectDashboard/page/front_panel.html">Front Panel</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/projects.html">Projects</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/tasks.html">Tasks</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/team.html">Team</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/reports.html">Reports</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/admin.html" class="active">Admin</a></li>
+                <!-- Settings and Logout moved to user dropdown -->
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="app-page-shell app-page-shell--admin">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <p class="header-kicker">Control Center</p>
+                    <h1>Admin Panel</h1>
+                    <p class="header-subtitle">Manage users, logs, archived data, and system administration from a tighter professional workspace.</p>
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell" id="notificationBell">
+                        🔔
+                        <span class="notification-badge" id="notifBadge">0</span>
+                        <div class="notification-panel" id="notifPanel">
+                            <div class="notification-panel-header">
+                                <span>Notifications</span>
+                                <a href="#" id="markAllRead">Mark all read</a>
+                            </div>
+                            <div class="notification-list" id="notifList">
+                                <div class="notification-empty">No notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="userMenuWrapper">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <div class="avatar" id="userAvatar">A</div>
+                            <span id="userName">Admin User</span>
+                            <span class="caret">&#9660;</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-dropdown-info">
+                                <b id="dropUserName">Admin User</b>
+                                <small>Administrator</small>
+                            </div>
+                            <a href="/ProjectDashboard/page/settings.html" class="dropdown-link">&#9881;&#65039; Settings</a>
+                            <a href="/ProjectDashboard/settings/logout.php" class="dropdown-link logout-link">&#128682; Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Admin Section Tabs -->
+            <ol class="uic-breadcrumb" style="margin:8px 0 4px;"><li><a href="/ProjectDashboard/page/front_panel.html">Dashboard</a></li><li>Admin Panel</li></ol>
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-section="overview">📈 Overview</button>
+                    <button class="tab-btn" data-section="users">👥 Users</button>
+                    <button class="tab-btn" data-section="archive">🗃️ Archive</button>
+                    <button class="tab-btn" data-section="projects">📁 Projects</button>
+                    <button class="tab-btn" data-section="password-resets">🔐 Password Resets</button>
+                    <button class="tab-btn" data-section="database">🗄️ Database</button>
+                </div>
+            </div>
+
+            <!-- Content Sections Wrapper -->
+            <div class="admin-content">
+            <!-- Overview Section -->
+            <section id="overview" class="content-section active">                
+                <!-- Stats Cards -->
+                <div class="stats-section">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h3>Total Users</h3>
+                            <p class="stat-value" id="totalUsers">-</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📁</div>
+                        <div class="stat-info">
+                            <h3>Active Projects</h3>
+                            <p class="stat-value" id="totalProjects">-</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✓</div>
+                        <div class="stat-info">
+                            <h3>Total Tasks</h3>
+                            <p class="stat-value" id="totalTasks">-</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-info">
+                            <h3>Active Today</h3>
+                            <p class="stat-value" id="activeUsers">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Logs Section -->
+                <div class="section-header" style="margin-top: 40px;">
+                    <h1>Activity Logs</h1>
+                    <button class="btn-primary" onclick="refreshLogs()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="activitySearch" placeholder="Search activity...">
+                        <select id="actionFilter">
+                            <option value="">All Actions</option>
+                            <option value="login">Login</option>
+                            <option value="logout">Logout</option>
+                            <option value="register">Register</option>
+                            <option value="password_reset">Password Reset</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="activityTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Entity Type</th>
+                                    <th>Description</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" class="loading">Loading activity logs...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Management Section -->
+            <section id="users" class="content-section">
+                <div class="section-header">
+                    <h1>User Management</h1>
+                    <button class="btn-primary" onclick="refreshUsers()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="userSearch" placeholder="Search users by name or email...">
+                        <select id="roleFilter">
+                            <option value="">All Roles</option>
+                            <option value="admin">Admin</option>
+                            <option value="manager">Manager</option>
+                            <option value="developer">Developer</option>
+                            <option value="user">User</option>
+                        </select>
+                        <select id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="loading">Loading users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Archive Section -->
+            <section id="archive" class="content-section">
+                <div class="section-header">
+                    <h1>Archived Accounts</h1>
+                    <button class="btn-primary" onclick="refreshArchive()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="archiveSearch" placeholder="Search archived accounts by name or email...">
+                    </div>
+
+                    <div class="table-container">
+                        <table id="archiveTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="loading">Loading archived accounts...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projects" class="content-section">
+                <div class="section-header">
+                    <h1>Project Management</h1>
+                    <button class="btn-primary" onclick="refreshProjects()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table id="projectsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Project Name</th>
+                                    <th>Status</th>
+                                    <th>Progress</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Created By</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="8" class="loading">Loading projects...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+
+
+            <!-- Password Reset Requests Section -->
+            <section id="password-resets" class="content-section">
+                <div class="section-header">
+                    <h1>Password Reset Requests</h1>
+                    <button class="btn-primary" onclick="refreshPasswordResets()">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar">
+                        <input type="text" id="resetSearch" placeholder="Search by email...">
+                        <select id="resetStatusFilter">
+                            <option value="">All Requests</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="expired">Expired</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="resetRequestsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Email</th>
+                                    <th>User Name</th>
+                                    <th>Token</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Expires</th>
+                                    <th>Used At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="9" class="loading">Loading password reset requests...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Settings removed from admin page -->
+
+            <!-- Database Section -->
+            <section id="database" class="content-section">
+                <h1>Database Management</h1>
+                
+                <div class="card">
+                    <h3>📊 Database Statistics</h3>
+                    <div class="db-stats">
+                        <div class="db-stat-item">
+                            <strong>Database Name:</strong>
+                            <span>project_management_db</span>
+                        </div>
+                        <div class="db-stat-item">
+                            <strong>Total Tables:</strong>
+                            <span id="totalTables">-</span>
+                        </div>
+                        <div class="db-stat-item">
+                            <strong>Total Records:</strong>
+                            <span id="totalRecords">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🗄️ Database Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn-success" onclick="alert('Backup feature - coming soon!')">
+                            💾 Backup Database
+                        </button>
+                        <button class="btn-warning" onclick="if(confirm('Clean old logs?')) alert('Cleanup feature - coming soon!')">
+                            🧹 Clean Old Logs
+                        </button>
+                        <button class="btn-danger" onclick="if(confirm('Are you sure? This will optimize all tables.')) alert('Optimize feature - coming soon!')">
+                            ⚡ Optimize Tables
+                        </button>
+                    </div>
+                </div>
+            </section>
+            </div>
+            <!-- End admin-content -->
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/admin.js?v=1775524581"></script>
+    <script>
+    // Check user role from DB — only admin can view this page
+    fetch('../settings/get_user.php').then(r=>r.json()).then(d=>{
+        if(!d || d.role !== 'admin'){
+            // Not an admin — redirect to dashboard
+            window.location.href = 'front_panel.html';
+            return;
+        }
+        if(d.full_name){
+            const n=d.full_name;
+            const a=document.getElementById('userAvatar');
+            const s=document.getElementById('userName');
+            const dd=document.getElementById('dropUserName');
+            if(a) a.textContent=n.charAt(0).toUpperCase();
+            if(s) s.textContent=n;
+            if(dd) dd.textContent=n;
+        }
+    }).catch(()=>{ window.location.href = 'front_panel.html'; });
+    </script>
+    <script>
+    (function(){
+        var btn=document.getElementById('userMenuBtn');
+        var menu=document.getElementById('userDropdown');
+        if(!btn||!menu)return;
+        btn.addEventListener('click',function(e){e.stopPropagation();menu.classList.toggle('open');});
+        document.addEventListener('click',function(e){if(!menu.contains(e.target)&&!btn.contains(e.target)){menu.classList.remove('open');}});
+        document.addEventListener('keydown',function(e){if(e.key==='Escape')menu.classList.remove('open');});
+    })();
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!window.UIC) return;
+        /* Upgrade existing status badges */
+        UIC.StatusBadge.upgradeAll();
+        /* Apply sorting to admin tables */
+        document.querySelectorAll('.admin-table, .data-table').forEach(t => {
+            t.classList.add('uic-table');
+            UIC.TableSorter.attach(t);
+        });
+        /* Animate stat counters in overview */
+        UIC.StatCounter.initAll();
+        /* Confirm dialogs on destructive admin actions */
+        document.querySelectorAll('[data-admin-confirm]').forEach(btn => {
+            btn.setAttribute('data-confirm', btn.getAttribute('data-admin-confirm') || 'Are you sure?');
+        });
+        /* Tooltip on export/delete buttons */
+        document.querySelectorAll('.btn-danger').forEach(b => {
+            if (!b.hasAttribute('data-tooltip')) b.setAttribute('data-tooltip', 'This action cannot be undone');
+        });
+    });
+    </script>
+</body>
+</html>

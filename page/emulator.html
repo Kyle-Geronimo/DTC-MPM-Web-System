@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emulator - Monitoring &amp; Project Management System</title>
+    <link rel="stylesheet" href="../css/emulator.css?v=1">
+    <link rel="stylesheet" href="../css/common.css?v=1">
+    <link rel="stylesheet" href="../css/chat.css?v=1">
+    <link rel="stylesheet" href="../css/dark-mode.css?v=1">
+    <link rel="stylesheet" href="../css/ui-components.css?v=1">
+    <script src="../js/app_core.js?v=1775571500" defer></script>
+    <script src="../js/chat.js?v=1" defer></script>
+    <script src="../js/ui-components.js?v=1" defer></script>
+    <!-- Pyodide is lazy-loaded in emulator.js when Python is first run -->
+</head>
+<body class="page app-page app-page--emulator">
+    <script>
+        (function(){
+            try{
+                var s = JSON.parse(localStorage.getItem('userSettings')||'{}');
+                if(s && s.theme==='dark'){
+                    document.documentElement.setAttribute('data-theme','dark');
+                    document.body.classList.add('dark');
+                }
+            }catch(e){}
+        })();
+    </script>
+
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="http://localhost/ProjectDashboard/page/front_panel.html">Front Panel</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/projects.html">Projects</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/tasks.html">Tasks</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/team.html">Team</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/reports.html">Reports</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/storage.html">Storage</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/emulator.html" class="active">Emulator</a></li>
+                <li id="adminNavLink" style="display:none"><a href="http://localhost/ProjectDashboard/page/admin.html">Admin</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="app-page-shell app-page-shell--emulator">
+
+                <!-- Header -->
+                <header class="header">
+                    <div class="header-left">
+                        <p class="header-kicker">Environment</p>
+                        <h1>Emulator</h1>
+                        <p class="header-subtitle">Run Python &amp; JavaScript programs in-browser, or boot x86 disk images.</p>
+                    </div>
+                    <div class="header-right">
+                        <div class="notification-bell" id="notificationBell">
+                            🔔
+                            <span class="notification-badge" id="notifBadge">0</span>
+                            <div class="notification-panel" id="notifPanel">
+                                <div class="notification-panel-header">
+                                    <span>Notifications</span>
+                                    <a href="#" id="markAllRead">Mark all read</a>
+                                </div>
+                                <div class="notification-list" id="notifList">
+                                    <div class="notification-empty">No notifications</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="userMenuWrapper">
+                            <button class="user-menu-btn" id="userMenuBtn">
+                                <div class="avatar" id="userAvatar">A</div>
+                                <span id="userName">User</span>
+                                <span class="caret">&#9660;</span>
+                            </button>
+                            <div class="user-dropdown" id="userDropdown">
+                                <div class="user-dropdown-info">
+                                    <b id="dropUserName">User</b>
+                                    <small>Member</small>
+                                </div>
+                                <a href="/ProjectDashboard/page/settings.html" class="dropdown-link">⚙️ Settings</a>
+                                <a href="/ProjectDashboard/settings/logout.php" class="dropdown-link logout-link">🔒 Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Breadcrumb -->
+                <nav aria-label="Breadcrumb">
+                    <ol class="uic-breadcrumb">
+                        <li><a href="/ProjectDashboard/page/front_panel.html">Dashboard</a></li>
+                        <li>Emulator</li>
+                    </ol>
+                </nav>
+
+                <!-- Two-panel layout -->
+                <div class="emulator-layout">
+
+                    <!-- Left: Program list -->
+                    <aside class="program-panel">
+                        <div class="program-panel__header">
+                            <h2>Programs</h2>
+                            <div style="display:flex;gap:6px;">
+                                <button class="btn-secondary btn-sm" id="importStorageBtn" title="Import a file from Storage">📦 Import</button>
+                                <button class="btn-primary" id="newProgramBtn">+ New</button>
+                            </div>
+                        </div>
+                        <div class="program-panel__filters">
+                            <input type="text" id="programSearch" placeholder="Search…" class="search-input">
+                            <select id="runtimeFilter" class="filter-select">
+                                <option value="">All Runtimes</option>
+                                <option value="python">Python</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="x86_disk_image">x86 Disk Image</option>
+                            </select>
+                        </div>
+                        <ul class="program-list" id="programList">
+                            <li class="loading-message">Loading…</li>
+                        </ul>
+                    </aside>
+
+                    <!-- Right: Runner panel -->
+                    <section class="runner-panel">
+                        <div id="runnerPlaceholder" class="runner-placeholder">
+                            <p>👈 Select a program to run or edit it.</p>
+                        </div>
+
+                        <!-- Script editor (Python / JavaScript) -->
+                        <div id="scriptRunner" style="display:none;" class="script-runner">
+                            <div class="runner-header">
+                                <h2 id="runnerTitle">Program Name</h2>
+                                <div class="runtime-badge" id="runnerRuntimeBadge"></div>
+                            </div>
+                            <textarea id="codeEditor" class="code-editor" spellcheck="false"></textarea>
+                            <div class="runner-actions">
+                                <button class="btn-primary" id="runBtn">▶ Run</button>
+                                <button class="btn-secondary" id="saveBtn">💾 Save</button>
+                                <button class="btn-secondary" id="clearOutputBtn">🗑 Clear Output</button>
+                            </div>
+                            <pre id="outputTerminal" class="output-terminal"><span class="terminal-hint">Output will appear here…</span></pre>
+                        </div>
+
+                        <!-- x86 / disk image runner -->
+                        <div id="x86Runner" style="display:none;" class="x86-runner">
+                            <div class="runner-header">
+                                <h2 id="x86RunnerTitle">Program Name</h2>
+                                <div class="runtime-badge runtime-badge--x86">x86 Disk Image</div>
+                            </div>
+                            <div class="runner-actions">
+                                <button class="btn-primary" id="bootBtn">⚡ Boot</button>
+                                <button class="btn-secondary" id="resetBtn">↺ Reset</button>
+                            </div>
+                            <div id="v86Container" class="v86-container"></div>
+                            <p class="emulator-hint">
+                                Powered by <a href="https://github.com/copy/v86" target="_blank" rel="noopener noreferrer">v86</a>.
+                                The emulator streams the disk image from the server.
+                            </p>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Import from Storage Modal -->
+    <div id="importStorageModal" class="modal" style="display:none;" aria-modal="true" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📦 Import from Storage</h2>
+                <button class="modal-close" id="closeImportStorage" aria-label="Close">&times;</button>
+            </div>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">
+                Select a <strong>.py</strong>, <strong>.js</strong>, <strong>.img</strong>, <strong>.iso</strong>, or <strong>.bin</strong> file
+                from your storage to run or save as a program.
+            </p>
+            <div id="importFileList" class="import-file-list">
+                <div class="loading-message">Loading storage files…</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancelImportStorage">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Program Modal -->
+    <div id="newProgramModal" class="modal" style="display:none;" aria-modal="true" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💻 New Program</h2>
+                <button class="modal-close" id="closeNewProgram" aria-label="Close">&times;</button>
+            </div>
+            <form id="newProgramForm">
+                <div class="form-group">
+                    <label for="newProgName">Name <span class="required">*</span></label>
+                    <input type="text" id="newProgName" name="name" required maxlength="150" placeholder="My Program">
+                </div>
+                <div class="form-group">
+                    <label for="newProgRuntime">Runtime <span class="required">*</span></label>
+                    <select id="newProgRuntime" name="runtime" required>
+                        <option value="python">Python (via Pyodide)</option>
+                        <option value="javascript">JavaScript (in-browser)</option>
+                        <option value="x86_disk_image">x86 Disk Image (v86)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="newProgDesc">Description</label>
+                    <textarea id="newProgDesc" name="description" rows="2" placeholder="Optional description…"></textarea>
+                </div>
+                <div class="form-group form-group--inline">
+                    <input type="checkbox" id="newProgPublic" name="is_public" value="1">
+                    <label for="newProgPublic">Make visible to all users</label>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary">Create</button>
+                    <button type="button" class="btn-secondary" id="cancelNewProgram">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="../js/emulator.js?v=1"></script>
+</body>
+</html>
