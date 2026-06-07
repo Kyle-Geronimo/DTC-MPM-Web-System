@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Monitoring & Project Management System</title>
+    <link rel="stylesheet" href="../css/settings.css?v=1775553600">
+    <link rel="stylesheet" href="../css/common.css?v=1775561200">
+    <link rel="stylesheet" href="../css/chat.css?v=1775524580">
+    <link rel="stylesheet" href="../css/dark-mode.css?v=1775558600">
+    <link rel="stylesheet" href="../css/ui-components.css?v=1">
+    <script src="../js/app_core.js?v=1775571500" defer></script>
+    <script src="../js/chat.js?v=1775524580" defer></script>
+    <script src="../js/ui-components.js?v=1" defer></script>
+    <script src="../js/chat.js?v=1775524580" defer></script>
+</head>
+<body class="page app-page app-page--settings">
+    <script>(function(){try{const s=JSON.parse(localStorage.getItem('userSettings')||'{}');if(s&&s.theme==='dark'){document.documentElement.setAttribute('data-theme','dark');document.body.classList.add('dark');}}catch(e){} })();</script>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="http://localhost/ProjectDashboard/page/front_panel.html">Front Panel</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/projects.html">Projects</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/tasks.html">Tasks</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/team.html">Team</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/reports.html">Reports</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/storage.html">Storage</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/emulator.html">Emulator</a></li>
+                <li id="adminNavLink" style="display:none"><a href="http://localhost/ProjectDashboard/page/admin.html">Admin</a></li>
+                <!-- Settings and Logout moved to user dropdown -->
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="app-page-shell app-page-shell--settings">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <p class="header-kicker">Preferences</p>
+                    <h1>Settings</h1>
+                    <p class="header-subtitle">Manage account, security, system behavior, and integrations in a cleaner administrative environment.</p>
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell" id="notificationBell">
+                        🔔
+                        <span class="notification-badge" id="notifBadge">0</span>
+                        <div class="notification-panel" id="notifPanel">
+                            <div class="notification-panel-header">
+                                <span>Notifications</span>
+                                <a href="#" id="markAllRead">Mark all read</a>
+                            </div>
+                            <div class="notification-list" id="notifList">
+                                <div class="notification-empty">No notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="userMenuWrapper">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <div class="avatar" id="userAvatar">A</div>
+                            <span id="userName">Admin User</span>
+                            <span class="caret">&#9660;</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-dropdown-info">
+                                <b id="dropUserName">Admin User</b>
+                                <small>Administrator</small>
+                            </div>
+                            <a href="/ProjectDashboard/page/settings.html" class="dropdown-link">&#9881;&#65039; Settings</a>
+                            <a href="/ProjectDashboard/settings/logout.php" class="dropdown-link logout-link">&#128682; Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Settings Content -->
+            <section class="settings-container">
+                <div class="settings-sidebar">
+                    <div class="settings-menu">
+                        <a href="#account" class="settings-link active">Account Settings</a>
+                        <a href="#security" class="settings-link">Security</a>
+                        <a href="#notifications" class="settings-link">Notifications</a>
+                        <a href="#system" class="settings-link">System</a>
+                        <a href="#integration" class="settings-link">Integrations</a>
+                        <a href="#appearance" class="settings-link">Accessibility</a>
+                    </div>
+                </div>
+
+                <div class="settings-panel">
+                    <!-- Account Settings -->
+                    <div class="settings-section" id="account">
+                        <h2>Account Settings</h2>
+
+                        <!-- Step Indicator for profile completion -->
+                        <div id="profileSteps" style="margin-bottom:24px;"></div>
+
+                        <form class="settings-form" id="accountSettingsForm">
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" name="email" value="admin@dashboard.com" placeholder="Enter email" readonly
+                                    data-tooltip="Email cannot be changed here. Contact admin.">
+                                <span class="uic-help">Your login email address.</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Full Name <span class="req-mark">*</span></label>
+                                <input type="text" name="full_name" value="Admin User" placeholder="Enter full name" required>
+                                <span class="uic-help">This name appears across the dashboard.</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" name="phone" value="+1 234 567 8900" placeholder="Enter phone number">
+                            </div>
+                            <div class="form-group">
+                                <label>Bio</label>
+                                <textarea name="bio" rows="4" placeholder="Write a short bio">Experienced project manager and system administrator</textarea>
+                                <span class="uic-help">A short bio visible to your teammates.</span>
+                            </div>
+                            <div id="accountAlertSlot"></div>
+                            <button type="submit" class="btn-save">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <!-- Security Settings -->
+                    <div class="settings-section" id="security">
+                        <h2>Security Settings</h2>
+                        <form class="settings-form" id="securitySettingsForm">
+                            <div class="form-group">
+                                <label>Current Password <span class="req-mark">*</span></label>
+                                <input type="password" name="current_password" placeholder="Enter current password" required>
+                                <span class="uic-help">Required to verify your identity before changing password.</span>
+                            </div>
+                            <div class="form-group">
+                                <label>New Password <span class="req-mark">*</span></label>
+                                <input type="password" name="new_password" placeholder="Enter new password" required>
+                                <span class="uic-help">Minimum 8 characters. Use letters, numbers and symbols.</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm Password <span class="req-mark">*</span></label>
+                                <input type="password" name="confirm_password" placeholder="Confirm new password" required>
+                            </div>
+                            <div id="securityAlertSlot"></div>
+                            <button type="submit" class="btn-save">Update Password</button>
+                        </form>
+
+                        <div class="security-section">
+                            <h3>Two-Factor Authentication</h3>
+                            <p>Add an extra layer of security to your account</p>
+                            <button class="btn-secondary" data-tooltip="Coming soon — 2FA via email OTP">Enable 2FA</button>
+                        </div>
+                    </div>
+
+                    <!-- Notification Preferences -->
+                    <div class="settings-section" id="notifications">
+                        <h2>Notification Preferences</h2>
+                        <p style="color:var(--uic-muted,#6b7280);font-size:14px;margin-bottom:20px;">
+                            Choose which notifications you want to receive. Changes are saved automatically.
+                        </p>
+                        <div id="notifTogglesContainer"></div>
+                    </div>
+
+                    <!-- System Settings -->
+                    <div class="settings-section" id="system">
+                        <h2>System Settings</h2>
+                        <div class="settings-options">
+                            <!-- Page Theme -->
+                            <div class="option-group">
+                                <div class="option-header">
+                                    <label class="option-title">Page Theme</label>
+                                </div>
+                                <div class="theme-selector" style="display:flex;gap:10px;margin-top:12px;margin-bottom:16px;">
+                                    <button type="button" class="theme-btn" data-theme="light" aria-pressed="false">Light</button>
+                                    <button type="button" class="theme-btn" data-theme="dark" aria-pressed="false">Dark</button>
+                                    <button type="button" class="theme-btn" data-theme="auto" aria-pressed="false">Auto</button>
+                                </div>
+                                <p class="option-desc">Choose your preferred theme for the interface</p>
+                            </div>
+                            
+                            <div class="option-group">
+                                <div class="option-header">
+                                    <label class="option-title">Maintenance Mode</label>
+                                    <input type="checkbox" class="toggle">
+                                </div>
+                                <p class="option-desc">Enable maintenance mode for the system</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Integration Settings -->
+                    <div class="settings-section" id="integration">
+                        <h2>Integrations</h2>
+                        <div class="integration-list">
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <h3>GitHub</h3>
+                                    <p>Connect your GitHub repository</p>
+                                </div>
+                                <button class="btn-connect">Connect</button>
+                            </div>
+
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <h3>Slack</h3>
+                                    <p>Integrate with Slack for notifications</p>
+                                </div>
+                                <button class="btn-connect connected">Connected</button>
+                            </div>
+
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <h3>Jira</h3>
+                                    <p>Sync with Jira for issue tracking</p>
+                                </div>
+                                <button class="btn-connect">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appearance Settings -->
+                    <div class="settings-section" id="appearance">
+                        <h2>Accessibility</h2>
+                        <div class="settings-options">
+                            <div class="option-group">
+                                <div class="option-header">
+                                    <label class="option-title">Compact View</label>
+                                    <input type="checkbox" class="toggle">
+                                </div>
+                                <p class="option-desc">Show more information in compact layout</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            </div>
+        </main>
+    </div>
+    <script src="../js/settings.js?v=1775558600"></script>
+    <script>
+    fetch('../settings/get_user.php').then(r=>r.json()).then(d=>{
+        if(d&&d.full_name){const n=d.full_name;const a=document.getElementById('userAvatar');const s=document.getElementById('userName');const dd=document.getElementById('dropUserName');if(a)a.textContent=n.charAt(0).toUpperCase();if(s)s.textContent=n;if(dd)dd.textContent=n;}
+    }).catch(()=>{});
+    </script>
+    <script>
+    (function(){
+        var btn=document.getElementById('userMenuBtn');
+        var menu=document.getElementById('userDropdown');
+        if(!btn||!menu)return;
+        btn.addEventListener('click',function(e){e.stopPropagation();menu.classList.toggle('open');});
+        document.addEventListener('click',function(e){if(!menu.contains(e.target)&&!btn.contains(e.target)){menu.classList.remove('open');}});
+        document.addEventListener('keydown',function(e){if(e.key==='Escape')menu.classList.remove('open');});
+    })();
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!window.UIC) return;
+
+        /* Breadcrumb */
+        const shell = document.querySelector('.app-page-shell--settings');
+        if (shell) {
+            const header = shell.querySelector('header.header');
+            if (header) {
+                const nav = document.createElement('nav');
+                nav.setAttribute('aria-label','Breadcrumb');
+                nav.innerHTML = '<ol class="uic-breadcrumb"><li><a href="/ProjectDashboard/page/front_panel.html">Dashboard</a></li><li>Settings</li></ol>';
+                header.after(nav);
+            }
+        }
+
+        /* Profile completion step indicator */
+        const stepsEl = document.getElementById('profileSteps');
+        if (stepsEl) {
+            UIC.Steps.render(stepsEl, ['Account Info', 'Security', 'Notifications', 'Done'], 1);
+        }
+
+        /* Notification toggles */
+        const ntc = document.getElementById('notifTogglesContainer');
+        if (ntc) UIC.NotifToggles.render(ntc);
+
+        /* Form validation */
+        UIC.FormValidator.attach('#securitySettingsForm', {
+            current_password: ['required'],
+            new_password:     ['required', {minLength: 8}],
+            confirm_password: ['required', {match: 'securitySettingsForm [name="new_password"]'}]
+        });
+
+        /* Security form success message */
+        const secForm = document.getElementById('securitySettingsForm');
+        if (secForm) {
+            secForm.addEventListener('submit', function(e) {
+                const np = secForm.querySelector('[name="new_password"]').value;
+                const cp = secForm.querySelector('[name="confirm_password"]').value;
+                if (np && cp && np === cp) {
+                    UIC.Alert.success('Password updated successfully!', '#securityAlertSlot');
+                }
+            });
+        }
+
+        /* Account form success */
+        const accForm = document.getElementById('accountSettingsForm');
+        if (accForm) {
+            accForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                UIC.Alert.success('Account settings saved.', '#accountAlertSlot');
+                // advance step indicator
+                UIC.Steps.advance(stepsEl, 4);
+            });
+        }
+
+        /* Collapsible sections for long settings panels */
+        document.querySelectorAll('.settings-section').forEach(section => {
+            const id = section.id;
+            if (!id || id === 'account') return; // leave account open
+            const heading = section.querySelector('h2');
+            if (!heading) return;
+            // wrap section content after heading in a collapsible body
+            const titleText = heading.textContent;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'uic-collapsible' + (id === 'security' ? ' open' : '');
+            const head = document.createElement('div');
+            head.className = 'uic-collapsible__head';
+            head.innerHTML = `<span class="uic-collapsible__title">${titleText}</span>`;
+            const body = document.createElement('div');
+            body.className = 'uic-collapsible__body';
+            // move all children after heading into body
+            Array.from(section.children).forEach(child => {
+                if (child !== heading) body.appendChild(child);
+            });
+            heading.style.display = 'none'; // hide original h2
+            wrapper.appendChild(head);
+            wrapper.appendChild(body);
+            section.appendChild(wrapper);
+            UIC.Collapsible.init(wrapper);
+        });
+
+        /* Settings sidebar link scroll + active state */
+        document.querySelectorAll('.settings-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                document.querySelectorAll('.settings-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+    });
+    </script>
+</body>
+</html>
