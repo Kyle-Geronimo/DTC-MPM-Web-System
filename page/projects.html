@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Monitoring & Project Management System</title>
+    <link rel="stylesheet" href="../css/projects.css?v=1775553600">
+    <link rel="stylesheet" href="../css/common.css?v=1775561200">
+    <link rel="stylesheet" href="../css/chat.css?v=1775524580">
+    <link rel="stylesheet" href="../css/dark-mode.css?v=1775558600">
+    <link rel="stylesheet" href="../css/ui-components.css?v=1">
+    <script src="../js/app_core.js?v=1775571500" defer></script>
+    <script src="../js/chat.js?v=1775524580" defer></script>
+    <script src="../js/ui-components.js?v=1" defer></script>
+</head>
+<body class="page app-page app-page--projects">
+    <script>
+        (function(){
+            try{
+                const s = JSON.parse(localStorage.getItem('userSettings')||'{}');
+                if (s && s.theme === 'dark'){
+                    document.documentElement.setAttribute('data-theme','dark');
+                    document.body.classList.add('dark');
+                }
+            }catch(e){/* ignore */}
+        })();
+    </script>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>📊 DashBoard</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="http://localhost/ProjectDashboard/page/front_panel.html">Front Panel</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/projects.html" class="active">Projects</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/tasks.html">Tasks</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/team.html">Team</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/reports.html">Reports</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/storage.html">Storage</a></li>
+                <li><a href="http://localhost/ProjectDashboard/page/emulator.html">Emulator</a></li>
+                <li id="adminNavLink" style="display:none"><a href="http://localhost/ProjectDashboard/page/admin.html">Admin</a></li>
+                <!-- Settings and Logout moved to user dropdown -->
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="app-page-shell app-page-shell--projects">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <p class="header-kicker">Portfolio</p>
+                    <h1>Projects</h1>
+                    <p class="header-subtitle">Plan delivery, review progress, and manage project execution in a cleaner professional workspace.</p>
+                </div>
+                <div class="header-right">
+                    <div class="notification-bell" id="notificationBell">
+                        🔔
+                        <span class="notification-badge" id="notifBadge">0</span>
+                        <div class="notification-panel" id="notifPanel">
+                            <div class="notification-panel-header">
+                                <span>Notifications</span>
+                                <a href="#" id="markAllRead">Mark all read</a>
+                            </div>
+                            <div class="notification-list" id="notifList">
+                                <div class="notification-empty">No notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="userMenuWrapper">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <div class="avatar" id="userAvatar">A</div>
+                            <span id="userName">Admin User</span>
+                            <span class="caret">&#9660;</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-dropdown-info">
+                                <b id="dropUserName">Admin User</b>
+                                <small>Administrator</small>
+                            </div>
+                            <a href="/ProjectDashboard/page/settings.html" class="dropdown-link">&#9881;&#65039; Settings</a>
+                            <a href="/ProjectDashboard/settings/logout.php" class="dropdown-link logout-link">&#128682; Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Breadcrumb -->
+            <nav aria-label="Breadcrumb">
+                <ol class="uic-breadcrumb">
+                    <li><a href="/ProjectDashboard/page/front_panel.html">Dashboard</a></li>
+                    <li>Projects</li>
+                </ol>
+            </nav>
+
+            <!-- Stat Container -->
+            <section class="uic-stats-grid" id="projectsStatGrid" style="margin-bottom:20px;">
+                <div class="uic-stat-card">
+                    <span class="uic-stat-card__icon">📁</span>
+                    <span class="uic-stat-card__label">Total Projects</span>
+                    <span class="uic-stat-card__value" id="statTotalProjects" data-stat-target="0">…</span>
+                </div>
+                <div class="uic-stat-card">
+                    <span class="uic-stat-card__icon">🟢</span>
+                    <span class="uic-stat-card__label">Active</span>
+                    <span class="uic-stat-card__value" id="statActiveProjects" data-stat-target="0">…</span>
+                </div>
+                <div class="uic-stat-card">
+                    <span class="uic-stat-card__icon">✅</span>
+                    <span class="uic-stat-card__label">Completed</span>
+                    <span class="uic-stat-card__value" id="statCompletedProjects" data-stat-target="0">…</span>
+                </div>
+                <div class="uic-stat-card">
+                    <span class="uic-stat-card__icon">⏸</span>
+                    <span class="uic-stat-card__label">On Hold</span>
+                    <span class="uic-stat-card__value" id="statOnHoldProjects" data-stat-target="0">…</span>
+                </div>
+            </section>
+
+            <!-- Projects Filter -->
+            <section class="filter-section">
+                <div class="filter-group">
+                    <div class="uic-search-wrap">
+                        <input type="text" id="projectSearchInput" placeholder="Search projects…" class="search-input"
+                            data-search-target="#projectsGrid" data-tooltip="Search by name or description">
+                    </div>
+                    <select class="filter-select" id="projectStatusFilter">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                        <option value="on-hold">On Hold</option>
+                    </select>
+                    <div id="projRefreshBar"></div>
+                    <button class="btn-primary" id="newProjectBtnPage">+ New Project</button>
+                </div>
+            </section>
+
+            <!-- Projects Grid -->
+            <section class="projects-grid" id="projectsGrid">
+                <!-- Projects will be loaded dynamically -->
+                <div class="loading-message">Loading projects...</div>
+            </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Project Modal -->
+    <div id="newProjectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📁 New Project</h2>
+            </div>
+            <form id="newProjectForm">
+                <input type="hidden" id="projectId" name="project_id" value="">
+                <div class="form-group">
+                    <label for="projectName">Project Name *</label>
+                    <input type="text" id="projectName" name="name" required placeholder="Enter project name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="projectDescription">Description</label>
+                    <textarea id="projectDescription" name="description" rows="3" placeholder="Brief description of the project"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectStartDate">Start Date *</label>
+                        <input type="date" id="projectStartDate" name="start_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectEndDate">End Date *</label>
+                        <input type="date" id="projectEndDate" name="end_date" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectStatus">Status</label>
+                        <select id="projectStatus" name="status">
+                            <option value="active">Active</option>
+                            <option value="on-hold">On Hold</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectProgress">Initial Progress (%)</label>
+                        <input type="number" id="projectProgress" name="progress" min="0" max="100" value="0" placeholder="0">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="projectBudget">Budget</label>
+                        <input type="number" id="projectBudget" name="budget" min="0" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="projectSpent">Spent</label>
+                        <input type="number" id="projectSpent" name="spent" min="0" step="0.01" value="0" placeholder="0.00">
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary cancel-btn">Cancel</button>
+                    <button type="submit" class="btn-primary">Done</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- View Project Modal -->
+    <div id="viewProjectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔍 Project Details</h2>
+            </div>
+            <div class="modal-body">
+                <div class="view-row" style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+                    <h3 id="viewProjectName">Loading...</h3>
+                    <span id="viewProjectStatus" class="status-badge">&nbsp;</span>
+                </div>
+                <p id="viewProjectDescription" class="project-desc"></p>
+
+                <div class="view-meta" style="display:flex;gap:20px;flex-wrap:wrap;color:var(--text-light);">
+                    <div><strong>Start:</strong> <span id="viewStartDate">-</span></div>
+                    <div><strong>End:</strong> <span id="viewEndDate">-</span></div>
+                    <div><strong>Progress:</strong> <span id="viewProgress">0%</span></div>
+                </div>
+
+                <div class="view-finance" style="display:flex;gap:20px;margin-top:12px;color:var(--text-light);">
+                    <div><strong>Budget:</strong> <span id="viewBudget">-</span></div>
+                    <div><strong>Spent:</strong> <span id="viewSpent">-</span></div>
+                </div>
+
+                <div class="view-footer" style="margin-top:20px; text-align:right;">
+                    <button class="btn-secondary view-close">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Project Modal removed per request -->
+
+    <script src="../js/projects.js?v=1775524580"></script>
+    <script>
+    fetch('../settings/get_user.php').then(r=>r.json()).then(d=>{
+        if(d&&d.full_name){const n=d.full_name;const a=document.getElementById('userAvatar');const s=document.getElementById('userName');const dd=document.getElementById('dropUserName');if(a)a.textContent=n.charAt(0).toUpperCase();if(s)s.textContent=n;if(dd)dd.textContent=n;}
+    }).catch(()=>{});
+    </script>
+    <script>
+    (function(){
+        var btn=document.getElementById('userMenuBtn');
+        var menu=document.getElementById('userDropdown');
+        if(!btn||!menu) return;
+        btn.addEventListener('click',function(e){e.stopPropagation();menu.classList.toggle('open');});
+        document.addEventListener('click',function(e){if(!menu.contains(e.target)&&!btn.contains(e.target)){menu.classList.remove('open');}});
+        document.addEventListener('keydown',function(e){if(e.key==='Escape')menu.classList.remove('open');});
+    })();
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!window.UIC) return;
+
+        /* Refresh timer */
+        const pb = document.getElementById('projRefreshBar');
+        if (pb) UIC.RefreshTimer.create(pb, 30, function(){ if(window.loadProjects) loadProjects(); });
+
+        /* Form validation */
+        UIC.FormValidator.attach('#newProjectForm', {
+            name:       ['required', {minLength: 2}],
+            start_date: ['required'],
+            end_date:   ['required']
+        });
+
+        /* Skeleton loader on projects grid */
+        const grid = document.getElementById('projectsGrid');
+        if (grid && grid.textContent.trim() === 'Loading projects...') {
+            UIC.Skeleton.show(grid, 6, 'card');
+        }
+
+        /* Wire new project button on page (separate from modal button) */
+        const nb = document.getElementById('newProjectBtnPage');
+        const mb = document.querySelector('#newProjectModal');
+        if (nb && mb) {
+            nb.onclick = function() {
+                mb.classList.add('active');
+                mb.style.display = 'flex';
+            };
+        }
+
+        /* Status filter wiring */
+        const statusFilter = document.getElementById('projectStatusFilter');
+        const searchInput  = document.getElementById('projectSearchInput');
+        function applyFilters() {
+            const status = statusFilter ? statusFilter.value : '';
+            const term   = searchInput  ? searchInput.value.toLowerCase()  : '';
+            const cards  = document.querySelectorAll('#projectsGrid [data-searchable]');
+            let visible = 0;
+            cards.forEach(card => {
+                const cardStatus  = (card.dataset.status || '').toLowerCase();
+                const matchStatus = !status || cardStatus === status;
+                const matchSearch = !term || card.textContent.toLowerCase().includes(term);
+                card.style.display = (matchStatus && matchSearch) ? '' : 'none';
+                if (matchStatus && matchSearch) visible++;
+            });
+            const noRes = document.querySelector('#projectsGrid .uic-no-results');
+            if (visible === 0 && (status || term)) {
+                if (!noRes) {
+                    const d = document.createElement('div');
+                    document.getElementById('projectsGrid').appendChild(d);
+                    UIC.NoResults.show(d, { msg: 'No matching projects.', hint: 'Try adjusting your filters.' });
+                }
+            } else if (noRes) noRes.remove();
+        }
+        if (statusFilter) statusFilter.onchange = applyFilters;
+        if (searchInput)  searchInput.oninput   = applyFilters;
+
+        /* Update stat cards when projects load */
+        document.addEventListener('uic:projectsLoaded', function(e) {
+            const projects = e.detail || [];
+            UIC.StatCounter.animate(document.getElementById('statTotalProjects'), projects.length);
+            UIC.StatCounter.animate(document.getElementById('statActiveProjects'),    projects.filter(p => p.status === 'active').length);
+            UIC.StatCounter.animate(document.getElementById('statCompletedProjects'), projects.filter(p => p.status === 'completed').length);
+            UIC.StatCounter.animate(document.getElementById('statOnHoldProjects'),    projects.filter(p => p.status === 'on-hold').length);
+        });
+    });
+    </script>
+</body>
+</html>
